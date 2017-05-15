@@ -15,7 +15,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyOrdersActivity"></activity>
+        <activity android:name=".MyOrdersActivity" />
+        <activity android:name=".OpeningHoursActivity"></activity>
     </application>
 
 </manifest>
