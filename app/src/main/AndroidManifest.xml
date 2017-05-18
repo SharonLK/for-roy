@@ -15,8 +15,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyOrdersActivity" />
-        <activity android:name=".OpeningHoursActivity"></activity>
+        <activity android:name=".MyOrdersActivity" android:parentActivityName=".MainActivity"/>
+        <activity android:name=".OpeningHoursActivity" android:parentActivityName=".MainActivity"/>
+        <activity android:name=".AboutActivity" android:parentActivityName=".MainActivity"/>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SettingsActivity" android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>
