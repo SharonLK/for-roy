@@ -15,6 +15,7 @@ public class MyOrdersActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.nav_orders);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

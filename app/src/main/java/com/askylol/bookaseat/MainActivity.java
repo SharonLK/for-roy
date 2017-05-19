@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         final ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
+            actionBar.setTitle(R.string.nav_library);
             actionBar.setDisplayHomeAsUpEnabled(true);
             mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
 
@@ -56,14 +57,12 @@ public class MainActivity extends AppCompatActivity {
                     switch (item.getItemId()) {
                         case R.id.nav_about_us:
                             c = AboutActivity.class;
-                            Log.d("HI", "not good");
                             break;
                         case R.id.nav_opening:
                             c = OpeningHoursActivity.class;
                             break;
                         case R.id.nav_orders:
                             c = MyOrdersActivity.class;
-                            Log.d("HI", "im here!");
                             break;
                         case R.id.nav_settings:
                             c = SettingsActivity.class;
