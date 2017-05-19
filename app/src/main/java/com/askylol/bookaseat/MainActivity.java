@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -29,20 +30,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
 
-        if (actionBar != null)
-        {
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name)
-            {
+            mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name) {
 
-                public void onDrawerClosed(View view)
-                {
+                public void onDrawerClosed(View view) {
                     supportInvalidateOptionsMenu();
                     //drawerOpened = false;
                 }
 
-                public void onDrawerOpened(View drawerView)
-                {
+                public void onDrawerOpened(View drawerView) {
                     supportInvalidateOptionsMenu();
                     //drawerOpened = true;
                 }
@@ -55,13 +52,30 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    switch(item.getItemId()) {
+                    Class c;
+                    switch (item.getItemId()) {
                         case R.id.nav_about_us:
-                            startActivity(new Intent(MainActivity.this, AboutActivity.class));
-                            drawerLayout.closeDrawers();
-                            return true;
+                            c = AboutActivity.class;
+                            Log.d("HI", "not good");
+                            break;
+                        case R.id.nav_opening:
+                            c = OpeningHoursActivity.class;
+                            break;
+                        case R.id.nav_orders:
+                            c = MyOrdersActivity.class;
+                            Log.d("HI", "im here!");
+                            break;
+                        case R.id.nav_settings:
+                            c = SettingsActivity.class;
+                            break;
+                        default:
+                            c = null;
+                            break;
                     }
-                    // TODO: Handle all cases
+                    if (c != null) {
+                        startActivity(new Intent(MainActivity.this, c));
+                        drawerLayout.closeDrawers();
+                    }
                     return true;
                 }
             });
@@ -69,15 +83,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState)
-    {
+    protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         mDrawerToggle.syncState();
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
