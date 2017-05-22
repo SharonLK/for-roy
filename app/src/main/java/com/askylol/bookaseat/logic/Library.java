@@ -19,10 +19,11 @@ public class Library {
     public static final Random r = new Random();
 
     public Library() {
-        for (int i = 0; i < 1000; i++) {
-            seats.add(new Seat(i));
-            locationById.put(i, new Point(r.nextInt(3000), r.nextInt(2000)));
-        }
+        seats.add(new Seat(0));
+        seats.add(new Seat(1));
+
+        locationById.put(0, new Point(200, 200));
+        locationById.put(1, new Point(400, 300));
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.askylol.bookaseat.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -46,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
                     System.out.println("A SKY LOLLOLOLOLOLOLOLOLOLOLOLOLOLOLOLOLL");
+
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setMessage("HELLO")
+                            .show();
                 }
             });
             // tileView.addMarker()
@@ -55,9 +61,10 @@ public class MainActivity extends AppCompatActivity {
             ImageView logo = new ImageView(this);
             logo.setImageResource(R.drawable.chair_icon);
             RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//            logoLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-            logoLayoutParams.leftMargin = point.x;
-            logoLayoutParams.topMargin = point.y;
+            logoLayoutParams.leftMargin = point.x - 50;
+            logoLayoutParams.topMargin = point.y - 50;
+            logoLayoutParams.width = 100;
+            logoLayoutParams.height = 100;
             relativeLayout.addView(logo, logoLayoutParams);
             tileView.addScalingViewGroup(relativeLayout);
         }
