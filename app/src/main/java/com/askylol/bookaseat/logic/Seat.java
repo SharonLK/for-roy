@@ -5,7 +5,7 @@ package com.askylol.bookaseat.logic;
  */
 public class Seat {
     public final int id;
-    private Status status;
+    private Status status = Status.FREE;
     private User user;
 
     public Seat(int id) {

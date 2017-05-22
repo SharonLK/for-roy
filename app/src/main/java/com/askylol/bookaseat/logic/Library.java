@@ -75,6 +75,10 @@ public class Library {
         return locationById.values();
     }
 
+    public Map<Integer, Point> getSeatLocationMap() {
+        return locationById;
+    }
+
     private Seat getSeatById(int id) {
         for (Seat seat : seats) {
             if (seat.id == id) {

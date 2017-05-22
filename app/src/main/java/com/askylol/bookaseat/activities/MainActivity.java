@@ -1,6 +1,6 @@
 package com.askylol.bookaseat.activities;
 
-import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -20,14 +20,24 @@ import android.widget.RelativeLayout;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
+import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.utils.Point;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.hotspots.HotSpot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     ActionBarDrawerToggle mDrawerToggle;
     Library library;
+    TileView tileView;
+
+    List<View> views = new ArrayList<>();
+    Map<Integer, View> viewBySeatId = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,38 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
         library = new Library();
 
-        TileView tileView = (TileView) findViewById(R.id.tile_view);
+        tileView = (TileView) findViewById(R.id.tile_view);
         tileView.setSize(3484, 2332);
         tileView.addDetailLevel(1.0f, "tile-%d_%d.jpg", 256, 256);
 
-        for (Point point : library.getSeatLocations()) {
-            HotSpot hotSpot = new HotSpot();
-            hotSpot.setTag(this);
-            hotSpot.set(point.x - 50, point.y - 50, point.x + 50, point.y + 50);
-            hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
-                @Override
-                public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
-                    System.out.println("A SKY LOLLOLOLOLOLOLOLOLOLOLOLOLOLOLOLOLL");
-
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setMessage("HELLO")
-                            .show();
-                }
-            });
-            // tileView.addMarker()
-            tileView.addHotSpot(hotSpot);
-
-            RelativeLayout relativeLayout = new RelativeLayout(this);
-            ImageView logo = new ImageView(this);
-            logo.setImageResource(R.drawable.chair_icon);
-            RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            logoLayoutParams.leftMargin = point.x - 50;
-            logoLayoutParams.topMargin = point.y - 50;
-            logoLayoutParams.width = 100;
-            logoLayoutParams.height = 100;
-            relativeLayout.addView(logo, logoLayoutParams);
-            tileView.addScalingViewGroup(relativeLayout);
-        }
+        updateTileViewViews();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -137,5 +120,62 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    private void updateTileViewViews() {
+        for (View view : views) {
+            tileView.removeView(view);
+        }
+
+        for (Map.Entry<Integer, Point> entry : library.getSeatLocationMap().entrySet()) {
+            final Point p = entry.getValue();
+            final int id = entry.getKey();
+
+            final boolean free = library.getSeat(id).getStatus() == Seat.Status.FREE;
+
+            HotSpot hotSpot = new HotSpot();
+            hotSpot.setTag(this);
+            hotSpot.set(p.x - 50, p.y - 50, p.x + 50, p.y + 50);
+            hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
+                @Override
+                public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setMessage("Chair Reservation")
+                            .setPositiveButton(free ? "RESERVE" : "FREE", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (free) {
+                                        library.reserve(id, null); // TODO: Update to real user
+                                    } else {
+                                        library.free(id);
+                                    }
+
+                                    updateTileViewViews();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .show();
+                }
+            });
+
+            tileView.addHotSpot(hotSpot);
+
+            RelativeLayout relativeLayout = new RelativeLayout(this);
+            ImageView logo = new ImageView(this);
+            logo.setImageResource(library.getSeat(id).getStatus() == Seat.Status.FREE ? R.drawable.chair_icon : R.drawable.chair_icon_occupied);
+            RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            logoLayoutParams.leftMargin = p.x - 50;
+            logoLayoutParams.topMargin = p.y - 50;
+            logoLayoutParams.width = 100;
+            logoLayoutParams.height = 100;
+            relativeLayout.addView(logo, logoLayoutParams);
+            tileView.addScalingViewGroup(relativeLayout);
+            views.add(relativeLayout);
+        }
     }
 }
