@@ -28,6 +28,7 @@ public class Library {
         }
 
         seat.setStatus(Seat.Status.RESERVED);
+        seat.setUser(user);
     }
 
     /**
@@ -43,6 +44,7 @@ public class Library {
         }
 
         seat.setStatus(Seat.Status.FREE);
+        seat.setUser(null);
     }
 
     /**
