@@ -1,17 +1,25 @@
 package com.askylol.bookaseat.logic;
 
+import com.askylol.bookaseat.utils.Point;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Sharon on 22-May-17.
  */
 public class Library {
     private List<Seat> seats = new ArrayList<>();
+    private Map<Integer, Point> locationById = new HashMap<>();
 
     public Library() {
         seats.add(new Seat(0));
         seats.add(new Seat(1));
+
+        locationById.put(0, new Point(0, 0));
+        locationById.put(1, new Point(100, 200));
     }
 
     /**
@@ -53,6 +61,10 @@ public class Library {
      */
     public Seat getSeat(int seatId) {
         return getSeatById(seatId);
+    }
+
+    public Point getSeatLocation(int seatId) {
+        return locationById.get(seatId);
     }
 
     private Seat getSeatById(int id) {
