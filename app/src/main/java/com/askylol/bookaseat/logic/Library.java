@@ -1,9 +1,19 @@
 package com.askylol.bookaseat.logic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Sharon on 22-May-17.
  */
 public class Library {
+    private List<Seat> seats = new ArrayList<>();
+
+    public Library() {
+        seats.add(new Seat(0));
+        seats.add(new Seat(1));
+    }
+
     /**
      * Reserves the wanted seat by the given user.
      *
@@ -11,7 +21,13 @@ public class Library {
      * @param user   user that reserves the seat
      */
     public void reserve(int seatId, User user) {
-        // TODO
+        Seat seat = getSeatById(seatId);
+
+        if (seat == null) {
+            return;
+        }
+
+        seat.setStatus(Seat.Status.RESERVED);
     }
 
     /**
@@ -20,7 +36,13 @@ public class Library {
      * @param seatId seat to be freed
      */
     public void free(int seatId) {
-        // TODO
+        Seat seat = getSeatById(seatId);
+
+        if (seat == null) {
+            return;
+        }
+
+        seat.setStatus(Seat.Status.FREE);
     }
 
     /**
@@ -28,6 +50,16 @@ public class Library {
      * @return a seat
      */
     public Seat getSeat(int seatId) {
-        return null; // TODO
+        return getSeatById(seatId);
+    }
+
+    private Seat getSeatById(int id) {
+        for (Seat seat : seats) {
+            if (seat.id == id) {
+                return seat;
+            }
+        }
+
+        return null;
     }
 }

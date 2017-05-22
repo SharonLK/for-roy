@@ -4,8 +4,13 @@ package com.askylol.bookaseat.logic;
  * Created by Sharon on 22-May-17.
  */
 public class Seat {
+    public final int id;
     private Status status;
     private User user;
+
+    public Seat(int id) {
+        this.id = id;
+    }
 
     /**
      * @return status of this seat
