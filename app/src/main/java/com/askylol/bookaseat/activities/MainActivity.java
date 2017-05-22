@@ -1,4 +1,4 @@
-package com.askylol.bookaseat;
+package com.askylol.bookaseat.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -10,9 +10,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+
+import com.askylol.bookaseat.R;
 
 public class MainActivity extends AppCompatActivity {
 

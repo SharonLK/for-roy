@@ -8,18 +8,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MyOrdersActivity" android:parentActivityName=".MainActivity"/>
-        <activity android:name=".OpeningHoursActivity" android:parentActivityName=".MainActivity"/>
-        <activity android:name=".AboutActivity" android:parentActivityName=".MainActivity"/>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SettingsActivity" android:parentActivityName=".MainActivity"/>
+        <activity android:name=".activities.MyOrdersActivity" android:parentActivityName=".activities.MainActivity"/>
+        <activity android:name=".activities.OpeningHoursActivity" android:parentActivityName=".activities.MainActivity"/>
+        <activity android:name=".activities.AboutActivity" android:parentActivityName=".activities.MainActivity"/>
+        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.SettingsActivity" android:parentActivityName=".activities.MainActivity"/>
     </application>
 
 </manifest>
