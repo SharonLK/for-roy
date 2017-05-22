@@ -44,6 +44,22 @@ public class Seat {
         this.user = user;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Seat seat = (Seat) o;
+
+        return id == seat.id;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
+    }
+
     public enum Status {
         OCCUPIED,
         RESERVED,
