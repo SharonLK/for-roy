@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by Sharon on 22-May-17.
@@ -15,12 +16,13 @@ public class Library {
     private List<Seat> seats = new ArrayList<>();
     private Map<Integer, Point> locationById = new HashMap<>();
 
-    public Library() {
-        seats.add(new Seat(0));
-        seats.add(new Seat(1));
+    public static final Random r = new Random();
 
-        locationById.put(0, new Point(0, 0));
-        locationById.put(1, new Point(100, 200));
+    public Library() {
+        for (int i = 0; i < 1000; i++) {
+            seats.add(new Seat(i));
+            locationById.put(i, new Point(r.nextInt(3000), r.nextInt(2000)));
+        }
     }
 
     /**

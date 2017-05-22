@@ -12,11 +12,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
+import com.askylol.bookaseat.utils.Point;
 import com.qozix.tileview.TileView;
+import com.qozix.tileview.hotspots.HotSpot;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +37,30 @@ public class MainActivity extends AppCompatActivity {
         TileView tileView = (TileView) findViewById(R.id.tile_view);
         tileView.setSize(3484, 2332);
         tileView.addDetailLevel(1.0f, "tile-%d_%d.jpg", 256, 256);
+
+        for (Point point : library.getSeatLocations()) {
+            HotSpot hotSpot = new HotSpot();
+            hotSpot.setTag(this);
+            hotSpot.set(point.x - 50, point.y - 50, point.x + 50, point.y + 50);
+            hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
+                @Override
+                public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
+                    System.out.println("A SKY LOLLOLOLOLOLOLOLOLOLOLOLOLOLOLOLOLL");
+                }
+            });
+            // tileView.addMarker()
+            tileView.addHotSpot(hotSpot);
+
+            RelativeLayout relativeLayout = new RelativeLayout(this);
+            ImageView logo = new ImageView(this);
+            logo.setImageResource(R.drawable.chair_icon);
+            RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            logoLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            logoLayoutParams.leftMargin = point.x;
+            logoLayoutParams.topMargin = point.y;
+            relativeLayout.addView(logo, logoLayoutParams);
+            tileView.addScalingViewGroup(relativeLayout);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
