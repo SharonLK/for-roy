@@ -3,6 +3,7 @@ package com.askylol.bookaseat.logic;
 import com.askylol.bookaseat.utils.Point;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,10 @@ public class Library {
 
     public Point getSeatLocation(int seatId) {
         return locationById.get(seatId);
+    }
+
+    public Collection<Point> getSeatLocations() {
+        return locationById.values();
     }
 
     private Seat getSeatById(int id) {
