@@ -1,5 +1,7 @@
 package com.askylol.bookaseat.logic;
 
+import com.askylol.bookaseat.utils.Point;
+
 /**
  * Created by Sharon on 22-May-17.
  */
@@ -7,9 +9,16 @@ public class Seat {
     public final int id;
     private Status status = Status.FREE;
     private User user;
+    private Point location;
 
-    public Seat(int id) {
+    private Seat() {
+        id = -1;
+        // Need for Firebase
+    }
+
+    public Seat(int id, Point location) {
         this.id = id;
+        this.location = location;
     }
 
     /**
@@ -33,6 +42,13 @@ public class Seat {
      */
     public User getUser() {
         return user;
+    }
+
+    /**
+     * @return this seat's location in
+     */
+    public Point getLocation() {
+        return location;
     }
 
     /**

@@ -8,6 +8,11 @@ public class Point {
     public final int x;
     public final int y;
 
+    private Point() {
+        x = -1;
+        y = -1;
+    }
+
     public Point(int x, int y) {
         this.x = x;
         this.y = y;

@@ -22,35 +22,49 @@ import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
 import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.utils.Point;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.hotspots.HotSpot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    ActionBarDrawerToggle mDrawerToggle;
-    Library library;
-    TileView tileView;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private Library library;
+    private TileView tileView;
 
-    List<View> views = new ArrayList<>();
-    Map<Integer, View> viewBySeatId = new HashMap<>();
+    private List<View> views = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        library = new Library();
-
         tileView = (TileView) findViewById(R.id.tile_view);
         tileView.setSize(3484, 2332);
-        tileView.addDetailLevel(1.0f, "tile-%d_%d.jpg", 256, 256);
 
-        updateTileViewViews();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("libraries");
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                library = dataSnapshot.child("library1").getValue(Library.class);
+                tileView.addDetailLevel(1.0f, "tile-%d_%d.jpg", 256, 256);
+                updateTileViewViews();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // TODO: handle error? logging?
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -127,15 +141,15 @@ public class MainActivity extends AppCompatActivity {
             tileView.removeView(view);
         }
 
-        for (Map.Entry<Integer, Point> entry : library.getSeatLocationMap().entrySet()) {
-            final Point p = entry.getValue();
-            final int id = entry.getKey();
+        for (Seat seat : library.getSeats()) {
+            final Point location = seat.getLocation();
+            final int id = seat.id;
 
             final boolean free = library.getSeat(id).getStatus() == Seat.Status.FREE;
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
-            hotSpot.set(p.x - 50, p.y - 50, p.x + 50, p.y + 50);
+            hotSpot.set(location.x - 50, location.y - 50, location.x + 50, location.y + 50);
             hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
                 @Override
                 public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
@@ -169,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
             ImageView logo = new ImageView(this);
             logo.setImageResource(library.getSeat(id).getStatus() == Seat.Status.FREE ? R.drawable.chair_icon : R.drawable.chair_icon_occupied);
             RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            logoLayoutParams.leftMargin = p.x - 50;
-            logoLayoutParams.topMargin = p.y - 50;
+            logoLayoutParams.leftMargin = location.x - 50;
+            logoLayoutParams.topMargin = location.y - 50;
             logoLayoutParams.width = 100;
             logoLayoutParams.height = 100;
             relativeLayout.addView(logo, logoLayoutParams);
