@@ -32,6 +32,7 @@ import com.qozix.tileview.hotspots.HotSpot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         tileView.setSize(3484, 2332);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference libraryRef = database.getReference("libraries").child("library1");
+        final DatabaseReference libraryRef = database.getReference("libraries").child("library5");
 
         libraryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -157,11 +158,12 @@ public class MainActivity extends AppCompatActivity {
             tileView.removeView(view);
         }
 
-        for (Seat seat : library.getSeats()) {
+        for (Map.Entry<String, Seat> entry : library.getIdToSeat().entrySet()) {
+            Seat seat = entry.getValue();
             final Point location = seat.getLocation();
-            final int id = seat.id;
+            final int id = Integer.parseInt(entry.getKey());
 
-            final boolean free = library.getSeat(id).getStatus() == Seat.Status.FREE;
+            final boolean free = seat.getStatus() == Seat.Status.FREE;
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
