@@ -41,6 +41,20 @@ public class MainActivity extends AppCompatActivity {
 
     private List<View> views = new ArrayList<>();
 
+    ValueEventListener libraryChangedListener = new ValueEventListener(){
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            library = dataSnapshot.getValue(Library.class);
+            library.setLibraryRef(dataSnapshot.getRef());
+            updateTileViewViews();
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // TODO: handle errors
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +64,16 @@ public class MainActivity extends AppCompatActivity {
         tileView.setSize(3484, 2332);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("libraries");
+        final DatabaseReference libraryRef = database.getReference("libraries").child("library1");
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        libraryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                library = dataSnapshot.child("library1").getValue(Library.class);
+                library = dataSnapshot.getValue(Library.class);
+                library.setLibraryRef(libraryRef);
                 tileView.addDetailLevel(1.0f, "tile-%d_%d.jpg", 256, 256);
-                updateTileViewViews();
+                libraryChangedListener.onDataChange(dataSnapshot);
+                libraryRef.addValueEventListener(libraryChangedListener);
             }
 
             @Override
@@ -163,8 +179,6 @@ public class MainActivity extends AppCompatActivity {
                                     } else {
                                         library.free(id);
                                     }
-
-                                    updateTileViewViews();
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
