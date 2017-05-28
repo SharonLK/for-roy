@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 library = dataSnapshot.getValue(Library.class);
+                System.out.println(library.getOpeningHours());
                 library.setLibraryRef(libraryRef);
                 tileView.addDetailLevel(1.0f, "tile-%d_%d.jpg", 256, 256);
                 libraryChangedListener.onDataChange(dataSnapshot);

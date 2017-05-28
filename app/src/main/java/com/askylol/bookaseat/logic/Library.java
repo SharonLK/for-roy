@@ -1,5 +1,6 @@
 package com.askylol.bookaseat.logic;
 
+import com.askylol.bookaseat.utils.OpeningHours;
 import com.askylol.bookaseat.utils.Point;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,6 +16,7 @@ import java.util.Map;
  */
 public class Library {
     private Map<String, Seat> idToSeat = new HashMap<>();
+    private OpeningHours openingHours = new OpeningHours();
     private DatabaseReference libraryRef;
 
     public Library() {
@@ -83,6 +85,14 @@ public class Library {
                         //TODO: acknowledge success, nah
                     }
                 });
+    }
+
+    public OpeningHours getOpeningHours() {
+        return openingHours;
+    }
+
+    public void setOpeningHours(OpeningHours openingHours) {
+        this.openingHours = openingHours;
     }
 
     /**
