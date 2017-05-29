@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         tileView = (TileView) findViewById(R.id.tile_view);
-        tileView.setSize(3484, 2332);
+        tileView.setSize(4000, 2000);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference libraryRef = database.getReference("libraries").child("library5");
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 library = dataSnapshot.getValue(Library.class);
                 library.setLibraryRef(libraryRef);
-                tileView.addDetailLevel(1.0f, "tile-%d_%d.jpg", 256, 256);
+                tileView.addDetailLevel(1.0f, "tile-%d_%d.png", 256, 256);
                 libraryChangedListener.onDataChange(dataSnapshot);
                 libraryRef.addValueEventListener(libraryChangedListener);
             }
