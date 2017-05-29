@@ -41,8 +41,6 @@ public class Library {
             return;
         }
 
-        seat.setStatus(Seat.Status.RESERVED);
-        seat.setUser(user);
         libraryRef
                 .child("idToSeat")
                 .child(String.valueOf(seatId))
@@ -71,8 +69,6 @@ public class Library {
             return;
         }
 
-        seat.setStatus(Seat.Status.FREE);
-        seat.setUser(null);
         libraryRef
                 .child("idToSeat")
                 .child(String.valueOf(seatId))
@@ -128,7 +124,7 @@ public class Library {
         }
 
         for (Reservation reservation : reservations.get(seatId).get(date)) {
-            if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfterOrSame(time)) {
+            if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfter(time)) {
                 return false;
             }
         }
