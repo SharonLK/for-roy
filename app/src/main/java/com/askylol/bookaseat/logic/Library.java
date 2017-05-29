@@ -18,7 +18,7 @@ public class Library {
     private Map<String, Seat> idToSeat = new HashMap<>();
     private OpeningHours openingHours = new OpeningHours();
     private Map<String, User> users = new HashMap<>();
-    private Map<String, Map<String, List<Reservation>>> reservations = new HashMap<>();
+    private Map<String, Map<String, Map<String, Reservation>>> reservations = new HashMap<>();
     private DatabaseReference libraryRef;
 
     private Library() {
@@ -27,10 +27,11 @@ public class Library {
 
     /**
      * Reserves the wanted seat by the given user.
+     *
      * @param seatId seat to reserve
      * @param user   user that reserves the seat
      */
-    public void reserve(String seatId, User user) {
+    public void reserve(String seatId, User user, TimeOfDay start, TimeOfDay end) {
         if (libraryRef == null) {
             //TODO: handle, nah
             throw new IllegalStateException("No reference to library on db");
@@ -41,16 +42,11 @@ public class Library {
             return;
         }
 
-        libraryRef
-                .child("idToSeat")
-                .child(String.valueOf(seatId))
-                .setValue(seat, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError,
-                                           DatabaseReference databaseReference) {
-                        //TODO: acknowledge success, nah
-                    }
-                });
+        libraryRef.child("reservations")
+                .child(seatId)
+                .child("29_5_17")
+                .push()
+                .setValue(new Reservation(start, end, user.getName()));
     }
 
     /**
@@ -106,7 +102,7 @@ public class Library {
         return users;
     }
 
-    public Map<String, Map<String, List<Reservation>>> getReservations() {
+    public Map<String, Map<String, Map<String, Reservation>>> getReservations() {
         return reservations;
     }
 
@@ -123,7 +119,7 @@ public class Library {
             return true;
         }
 
-        for (Reservation reservation : reservations.get(seatId).get(date)) {
+        for (Reservation reservation : reservations.get(seatId).get(date).values()) {
             if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfter(time)) {
                 return false;
             }

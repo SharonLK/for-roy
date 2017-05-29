@@ -24,6 +24,7 @@ import android.widget.TimePicker;
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
 import com.askylol.bookaseat.logic.Seat;
+import com.askylol.bookaseat.logic.User;
 import com.askylol.bookaseat.utils.Point;
 import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DataSnapshot;
@@ -47,12 +48,14 @@ public class MainActivity extends AppCompatActivity {
 
     private List<View> views = new ArrayList<>();
 
+    private TimeOfDay currTime = new TimeOfDay(0, 0);
+
     ValueEventListener libraryChangedListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             library = dataSnapshot.getValue(Library.class);
             library.setLibraryRef(dataSnapshot.getRef());
-            updateTileViewViews(new TimeOfDay(0, 0)); // TODO
+            updateTileViewViews();
         }
 
         @Override
@@ -65,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Calendar c = Calendar.getInstance();
+        currTime = new TimeOfDay(c.get(Calendar.HOUR), c.get(Calendar.MINUTE));
 
         final TextView occupancyText = (TextView) findViewById(R.id.occupancy_textview);
         Calendar mCurrentTime = Calendar.getInstance();
@@ -84,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
                             public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
                                 ((TextView) v).setText(String.format(
                                         getString(R.string.occupancy_time), selectedHour, selectedMinute));
-                                updateTileViewViews(new TimeOfDay(selectedHour, selectedMinute));
+                                currTime = new TimeOfDay(selectedHour, selectedMinute);
+                                updateTileViewViews();
                             }
                         }, mCurrentTime.get(Calendar.HOUR_OF_DAY), mCurrentTime.get(Calendar.MINUTE), true);
                 mTimePicker.setTitle("Select Time");
@@ -184,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void updateTileViewViews(TimeOfDay time) {
+    private void updateTileViewViews() {
         for (View view : views) {
             tileView.removeView(view);
         }
@@ -194,35 +201,33 @@ public class MainActivity extends AppCompatActivity {
             final Point location = seat.getLocation();
             final String id = entry.getKey();
 
-            final boolean free = library.isSeatFree(id, "29_5_17", time); // TODO
+            final boolean free = library.isSeatFree(id, "29_5_17", currTime); // TODO
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
             hotSpot.set(location.x - 50, location.y - 50, location.x + 50, location.y + 50);
-            hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
-                @Override
-                public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setMessage("Chair Reservation")
-                            .setPositiveButton(free ? "RESERVE" : "FREE", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (free) {
-                                        library.reserve(id, null); // TODO: Update to real user
-                                    } else {
-                                        library.free(id);
+            if (free) {
+                hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
+                    @Override
+                    public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setMessage("Chair Reservation")
+                                .setPositiveButton("RESERVE", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        library.reserve(id, new User("ylev"), currTime, currTime.add(1, 0)); // TODO: Update to real user
                                     }
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                                }
-                            })
-                            .show();
-                }
-            });
+                                    }
+                                })
+                                .show();
+                    }
+                });
+            }
 
             tileView.addHotSpot(hotSpot);
 

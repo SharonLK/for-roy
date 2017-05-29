@@ -34,6 +34,10 @@ public class TimeOfDay {
         return isAfter(other) || equals(other);
     }
 
+    public TimeOfDay add(int additionHours, int additionMinutes) {
+        return new TimeOfDay(hour + additionHours, minute + additionMinutes);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
