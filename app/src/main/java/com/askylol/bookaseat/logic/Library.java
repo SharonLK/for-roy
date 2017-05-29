@@ -128,6 +128,27 @@ public class Library {
         return true;
     }
 
+    public Reservation getNearestReservation(String seatId, String date, TimeOfDay time) {
+        if (!reservations.containsKey(seatId)) {
+            return null;
+        }
+
+        if (!reservations.get(seatId).containsKey(date)) {
+            return null;
+        }
+
+        Reservation nearest = null;
+
+        for (Reservation reservation : reservations.get(seatId).get(date).values()) {
+            if (reservation.getStart().isAfter(time) &&
+                    (nearest == null || reservation.getStart().isBefore(nearest.getStart()))) {
+                nearest = reservation;
+            }
+        }
+
+        return nearest;
+    }
+
     private Seat getSeatById(String id) {
         return idToSeat.get(id);
     }

@@ -25,6 +25,7 @@ import android.widget.TimePicker;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
+import com.askylol.bookaseat.logic.Reservation;
 import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.logic.User;
 import com.askylol.bookaseat.utils.Point;
@@ -75,12 +76,11 @@ public class MainActivity extends AppCompatActivity {
         currTime = new TimeOfDay(c.get(Calendar.HOUR), c.get(Calendar.MINUTE));
 
         final TextView occupancyText = (TextView) findViewById(R.id.occupancy_textview);
-        Calendar mCurrentTime = Calendar.getInstance();
         occupancyText.setText(
                 String.format(
                         getString(R.string.occupancy_time),
-                        mCurrentTime.get(Calendar.HOUR),
-                        mCurrentTime.get(Calendar.MINUTE)
+                        c.get(Calendar.HOUR),
+                        c.get(Calendar.MINUTE)
                 ));
         occupancyText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,18 +212,67 @@ public class MainActivity extends AppCompatActivity {
                 hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
                     @Override
                     public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
-                        final Dialog dialog = new Dialog(MainActivity.this);
-                        dialog.setContentView(R.layout.dialog_reservation);
-                        dialog.setTitle("RESERVE MEEEEEEE");
+                        final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Reserve a Seat")
+                                .setView(R.layout.dialog_reservation)
+                                .create();
 
-                        final TimePicker timePicker = (TimePicker) dialog.findViewById(R.id.timePicker);
+                        dialog.show();
+
+                        final TimeOfDay startTime = new TimeOfDay(currTime);
+                        final TimeOfDay endTime = startTime.add(1, 0);
+
+                        final Button startTimeButton = (Button) dialog.findViewById(R.id.startTimeButton);
+                        startTimeButton.setText(String.format("%02d:%02d", startTime.hour, startTime.minute));
+                        startTimeButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
+                                        startTime.hour = selectedHour;
+                                        startTime.minute = selectedMinute;
+                                        startTimeButton.setText(selectedHour + ":" + selectedMinute);
+                                    }
+                                }, startTime.hour, startTime.minute, true);
+                                timePickerDialog.setTitle("Select Time");
+                                timePickerDialog.show();
+                            }
+                        });
+
+                        final Button endTimeButton = (Button) dialog.findViewById(R.id.endTimeButton);
+                        endTimeButton.setText(String.format("%02d:%02d", endTime.hour, endTime.minute));
+                        endTimeButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
+                                        endTime.hour = selectedHour;
+                                        endTime.minute = selectedMinute;
+                                        endTimeButton.setText(selectedHour + ":" + selectedMinute);
+                                    }
+                                }, endTime.hour, endTime.minute, true);
+                                timePickerDialog.setTitle("Select Time");
+                                timePickerDialog.show();
+                            }
+                        });
+
                         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
                         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+//                        TextView nearestReservationLabel = (TextView) dialog.findViewById(R.id.nearestReservationLabel);
+//
+//                        Reservation nearestReservation = library.getNearestReservation(id, "29_5_17", currTime);
+//                        if (nearestReservation == null) {
+//                            nearestReservationLabel.setText("No other reservation today, titparea!");
+//                        } else {
+//                            nearestReservationLabel.setText("Nearest reservation starts at: " + nearestReservation.getStart());
+//                        }
 
                         reserveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                library.reserve(id, new User("ylev"), currTime, new TimeOfDay(timePicker.getCurrentHour(), timePicker.getCurrentMinute())); // TODO: Update to real user
+                                library.reserve(id, new User("ylev"), startTime, endTime); // TODO: Update to real user
                                 dialog.dismiss();
                             }
                         });
@@ -234,8 +283,6 @@ public class MainActivity extends AppCompatActivity {
                                 dialog.dismiss();
                             }
                         });
-
-                        dialog.show();
                     }
                 });
             }

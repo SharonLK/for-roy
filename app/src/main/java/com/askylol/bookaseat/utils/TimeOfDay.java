@@ -5,12 +5,17 @@ package com.askylol.bookaseat.utils;
  */
 
 public class TimeOfDay {
-    public final int hour;
-    public final int minute;
+    public int hour;
+    public int minute;
 
     public TimeOfDay() {
         hour = 0;
         minute = 0;
+    }
+
+    public TimeOfDay(TimeOfDay other) {
+        hour = other.hour;
+        minute = other.minute;
     }
 
     public TimeOfDay(int hour, int minute) {
