@@ -1,5 +1,6 @@
 package com.askylol.bookaseat.activities;
 
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
@@ -31,6 +34,7 @@ import com.qozix.tileview.TileView;
 import com.qozix.tileview.hotspots.HotSpot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<View> views = new ArrayList<>();
 
-    ValueEventListener libraryChangedListener = new ValueEventListener(){
+    ValueEventListener libraryChangedListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             library = dataSnapshot.getValue(Library.class);
@@ -60,6 +64,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final TextView occupancyText = (TextView) findViewById(R.id.occupancy_textview);
+        final Calendar mCurrentTime = Calendar.getInstance();
+        occupancyText.setText(
+                String.format(
+                        getString(R.string.occupancy_time),
+                        mCurrentTime.get(Calendar.HOUR),
+                        mCurrentTime.get(Calendar.MINUTE)
+                ));
+        occupancyText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                TimePickerDialog mTimePicker =
+                        new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
+                                ((TextView) v).setText(String.format(
+                                        getString(R.string.occupancy_time), selectedHour, selectedMinute));
+                            }
+                        }, mCurrentTime.get(Calendar.HOUR_OF_DAY), mCurrentTime.get(Calendar.MINUTE), true);
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+            }
+        });
 
         tileView = (TileView) findViewById(R.id.tile_view);
         tileView.setSize(3484, 2332);
