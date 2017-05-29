@@ -1,52 +1,55 @@
 package com.askylol.bookaseat.logic;
 
-import java.util.Date;
+import com.askylol.bookaseat.utils.TimeOfDay;
 
 /**
  * Created by Sharon on 22-May-17.
  */
 public class Reservation {
-    private int seatId;
-    private Date startDate;
-    private Date endDate;
-    private User user;
+    private TimeOfDay start;
+    private TimeOfDay end;
+    private String user;
 
-    public Reservation(int seatId, Date startDate, Date endDate, User user) {
-        this.seatId = seatId;
-        this.startDate = startDate;
-        this.endDate = endDate;
+    private Reservation() {
+
+    }
+
+    public Reservation(TimeOfDay start, TimeOfDay end, String user) {
+        this.start = start;
+        this.end = end;
         this.user = user;
     }
 
-    public int getSeatId() {
-        return seatId;
+    public TimeOfDay getStart() {
+        return start;
     }
 
-    public void setSeatId(int seatId) {
-        this.seatId = seatId;
+    public void setStart(TimeOfDay start) {
+        this.start = start;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public TimeOfDay getEnd() {
+        return end;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setEnd(TimeOfDay end) {
+        this.end = end;
     }
 
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public User getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(String user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "start=" + start +
+                ", end=" + end +
+                ", user='" + user + '\'' +
+                '}';
     }
 }

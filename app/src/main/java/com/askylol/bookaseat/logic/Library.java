@@ -17,13 +17,12 @@ import java.util.Map;
 public class Library {
     private Map<String, Seat> idToSeat = new HashMap<>();
     private OpeningHours openingHours = new OpeningHours();
+    private Map<String, User> users = new HashMap<>();
+    private Map<String, Map<String, List<Reservation>>> reservations = new HashMap<>();
     private DatabaseReference libraryRef;
 
-    public Library() {
-        idToSeat.put("0", new Seat(new Point(200, 200)));
-        idToSeat.put("1", new Seat(new Point(500, 323)));
-        idToSeat.put("3", new Seat(new Point(800, 32)));
-        idToSeat.put("65", new Seat(new Point(400, 800)));
+    private Library() {
+
     }
 
     /**
@@ -105,6 +104,14 @@ public class Library {
     @Exclude
     public List<Seat> getSeats() {
         return new ArrayList<>(idToSeat.values());
+    }
+
+    public Map<String, User> getUsers() {
+        return users;
+    }
+
+    public Map<String, Map<String, List<Reservation>>> getReservations() {
+        return reservations;
     }
 
     public Map<String, Seat> getIdToSeat() {
