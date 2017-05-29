@@ -1,5 +1,6 @@
 package com.askylol.bookaseat.activities;
 
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,7 +26,9 @@ import android.widget.TimePicker;
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
 import com.askylol.bookaseat.logic.Seat;
+import com.askylol.bookaseat.logic.User;
 import com.askylol.bookaseat.utils.Point;
+import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     private List<View> views = new ArrayList<>();
 
+    private TimeOfDay currTime = new TimeOfDay(0, 0);
+
     ValueEventListener libraryChangedListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -65,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Calendar c = Calendar.getInstance();
+        currTime = new TimeOfDay(c.get(Calendar.HOUR), c.get(Calendar.MINUTE));
+
         final TextView occupancyText = (TextView) findViewById(R.id.occupancy_textview);
         Calendar mCurrentTime = Calendar.getInstance();
         occupancyText.setText(
@@ -83,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
                             public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
                                 ((TextView) v).setText(String.format(
                                         getString(R.string.occupancy_time), selectedHour, selectedMinute));
+                                currTime = new TimeOfDay(selectedHour, selectedMinute);
+                                updateTileViewViews();
                             }
                         }, mCurrentTime.get(Calendar.HOUR_OF_DAY), mCurrentTime.get(Calendar.MINUTE), true);
                 mTimePicker.setTitle("Select Time");
@@ -100,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 library = dataSnapshot.getValue(Library.class);
-                System.out.println(library.getOpeningHours());
                 library.setLibraryRef(libraryRef);
                 tileView.addDetailLevel(1.0f, "tile-%d_%d.png", 256, 256);
                 libraryChangedListener.onDataChange(dataSnapshot);
@@ -193,41 +203,48 @@ public class MainActivity extends AppCompatActivity {
             final Point location = seat.getLocation();
             final String id = entry.getKey();
 
-            final boolean free = seat.getStatus() == Seat.Status.FREE;
+            final boolean free = library.isSeatFree(id, "29_5_17", currTime); // TODO
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
             hotSpot.set(location.x - 50, location.y - 50, location.x + 50, location.y + 50);
-            hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
-                @Override
-                public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setMessage("Chair Reservation")
-                            .setPositiveButton(free ? "RESERVE" : "FREE", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (free) {
-                                        library.reserve(id, null); // TODO: Update to real user
-                                    } else {
-                                        library.free(id);
-                                    }
-                                }
-                            })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+            if (free) {
+                hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
+                    @Override
+                    public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
+                        final Dialog dialog = new Dialog(MainActivity.this);
+                        dialog.setContentView(R.layout.dialog_reservation);
+                        dialog.setTitle("RESERVE MEEEEEEE");
 
-                                }
-                            })
-                            .show();
-                }
-            });
+                        final TimePicker timePicker = (TimePicker) dialog.findViewById(R.id.timePicker);
+                        Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
+                        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+
+                        reserveButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                library.reserve(id, new User("ylev"), currTime, new TimeOfDay(timePicker.getCurrentHour(), timePicker.getCurrentMinute())); // TODO: Update to real user
+                                dialog.dismiss();
+                            }
+                        });
+
+                        cancelButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.show();
+                    }
+                });
+            }
 
             tileView.addHotSpot(hotSpot);
 
             RelativeLayout relativeLayout = new RelativeLayout(this);
             ImageView logo = new ImageView(this);
-            logo.setImageResource(library.getSeat(id).getStatus() == Seat.Status.FREE ? R.drawable.chair_icon : R.drawable.chair_icon_occupied);
+            logo.setImageResource(free ? R.drawable.chair_icon : R.drawable.chair_icon_occupied);
             RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             logoLayoutParams.leftMargin = location.x - 50;
             logoLayoutParams.topMargin = location.y - 50;
