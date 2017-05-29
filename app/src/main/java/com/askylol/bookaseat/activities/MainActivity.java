@@ -1,5 +1,6 @@
 package com.askylol.bookaseat.activities;
 
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -210,21 +212,30 @@ public class MainActivity extends AppCompatActivity {
                 hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
                     @Override
                     public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setMessage("Chair Reservation")
-                                .setPositiveButton("RESERVE", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        library.reserve(id, new User("ylev"), currTime, currTime.add(1, 0)); // TODO: Update to real user
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                        final Dialog dialog = new Dialog(MainActivity.this);
+                        dialog.setContentView(R.layout.dialog_reservation);
+                        dialog.setTitle("RESERVE MEEEEEEE");
 
-                                    }
-                                })
-                                .show();
+                        final TimePicker timePicker = (TimePicker) dialog.findViewById(R.id.timePicker);
+                        Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
+                        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+
+                        reserveButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                library.reserve(id, new User("ylev"), currTime, new TimeOfDay(timePicker.getCurrentHour(), timePicker.getCurrentMinute())); // TODO: Update to real user
+                                dialog.dismiss();
+                            }
+                        });
+
+                        cancelButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                        dialog.show();
                     }
                 });
             }
