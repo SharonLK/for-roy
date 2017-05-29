@@ -25,6 +25,7 @@ import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
 import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.utils.Point;
+import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         public void onDataChange(DataSnapshot dataSnapshot) {
             library = dataSnapshot.getValue(Library.class);
             library.setLibraryRef(dataSnapshot.getRef());
-            updateTileViewViews();
+            updateTileViewViews(new TimeOfDay(0, 0)); // TODO
         }
 
         @Override
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                             public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
                                 ((TextView) v).setText(String.format(
                                         getString(R.string.occupancy_time), selectedHour, selectedMinute));
+                                updateTileViewViews(new TimeOfDay(selectedHour, selectedMinute));
                             }
                         }, mCurrentTime.get(Calendar.HOUR_OF_DAY), mCurrentTime.get(Calendar.MINUTE), true);
                 mTimePicker.setTitle("Select Time");
@@ -100,10 +102,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 library = dataSnapshot.getValue(Library.class);
-
-                System.out.println(library.getUsers());
-                System.out.println(library.getReservations());
-
                 library.setLibraryRef(libraryRef);
                 tileView.addDetailLevel(1.0f, "tile-%d_%d.jpg", 256, 256);
                 libraryChangedListener.onDataChange(dataSnapshot);
@@ -186,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void updateTileViewViews() {
+    private void updateTileViewViews(TimeOfDay time) {
         for (View view : views) {
             tileView.removeView(view);
         }
@@ -196,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
             final Point location = seat.getLocation();
             final String id = entry.getKey();
 
-            final boolean free = seat.getStatus() == Seat.Status.FREE;
+            final boolean free = library.isSeatFree(id, "29_5_17", time); // TODO
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
@@ -230,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
             RelativeLayout relativeLayout = new RelativeLayout(this);
             ImageView logo = new ImageView(this);
-            logo.setImageResource(library.getSeat(id).getStatus() == Seat.Status.FREE ? R.drawable.chair_icon : R.drawable.chair_icon_occupied);
+            logo.setImageResource(free ? R.drawable.chair_icon : R.drawable.chair_icon_occupied);
             RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             logoLayoutParams.leftMargin = location.x - 50;
             logoLayoutParams.topMargin = location.y - 50;

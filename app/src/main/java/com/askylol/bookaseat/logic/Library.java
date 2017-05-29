@@ -1,7 +1,7 @@
 package com.askylol.bookaseat.logic;
 
 import com.askylol.bookaseat.utils.OpeningHours;
-import com.askylol.bookaseat.utils.Point;
+import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
@@ -116,6 +116,24 @@ public class Library {
 
     public Map<String, Seat> getIdToSeat() {
         return idToSeat;
+    }
+
+    public boolean isSeatFree(String seatId, String date, TimeOfDay time) {
+        if (!reservations.containsKey(seatId)) {
+            return true;
+        }
+
+        if (!reservations.get(seatId).containsKey(date)) {
+            return true;
+        }
+
+        for (Reservation reservation : reservations.get(seatId).get(date)) {
+            if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfterOrSame(time)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private Seat getSeatById(String id) {
