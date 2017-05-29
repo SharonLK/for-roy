@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final TextView occupancyText = (TextView) findViewById(R.id.occupancy_textview);
-        final Calendar mCurrentTime = Calendar.getInstance();
+        Calendar mCurrentTime = Calendar.getInstance();
         occupancyText.setText(
                 String.format(
                         getString(R.string.occupancy_time),
@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         occupancyText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
+                Calendar mCurrentTime = Calendar.getInstance();
                 TimePickerDialog mTimePicker =
                         new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
                             @Override
@@ -190,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         for (Map.Entry<String, Seat> entry : library.getIdToSeat().entrySet()) {
             Seat seat = entry.getValue();
             final Point location = seat.getLocation();
-            final int id = Integer.parseInt(entry.getKey());
+            final String id = entry.getKey();
 
             final boolean free = seat.getStatus() == Seat.Status.FREE;
 

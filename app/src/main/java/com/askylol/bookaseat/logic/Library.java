@@ -28,11 +28,10 @@ public class Library {
 
     /**
      * Reserves the wanted seat by the given user.
-     *
      * @param seatId seat to reserve
      * @param user   user that reserves the seat
      */
-    public void reserve(int seatId, User user) {
+    public void reserve(String seatId, User user) {
         if (libraryRef == null) {
             //TODO: handle, nah
             throw new IllegalStateException("No reference to library on db");
@@ -62,7 +61,7 @@ public class Library {
      *
      * @param seatId seat to be freed
      */
-    public void free(int seatId) {
+    public void free(String seatId) {
         if (libraryRef == null) {
             //TODO: handle
             throw new IllegalStateException("No reference to library on db");
@@ -99,7 +98,7 @@ public class Library {
      * @param seatId seat to be returned
      * @return a seat
      */
-    public Seat getSeat(int seatId) {
+    public Seat getSeat(String seatId) {
         return getSeatById(seatId);
     }
 
@@ -112,8 +111,8 @@ public class Library {
         return idToSeat;
     }
 
-    private Seat getSeatById(int id) {
-        return idToSeat.get(Integer.toString(id));
+    private Seat getSeatById(String id) {
+        return idToSeat.get(id);
     }
 
     public void setLibraryRef(DatabaseReference libraryRef) {
