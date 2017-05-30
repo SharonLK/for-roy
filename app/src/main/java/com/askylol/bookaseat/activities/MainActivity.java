@@ -26,6 +26,7 @@ import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
 import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.logic.User;
+import com.askylol.bookaseat.utils.CalendarUtils;
 import com.askylol.bookaseat.utils.Point;
 import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +37,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.hotspots.HotSpot;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     private List<View> views = new ArrayList<>();
 
-    private Calendar selectedTime = Calendar.getInstance();
+    private Calendar selectedDateTime = Calendar.getInstance();
 
     ValueEventListener libraryChangedListener = new ValueEventListener() {
         @Override
@@ -71,9 +71,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        selectedTime = Calendar.getInstance();
+        selectedDateTime = Calendar.getInstance();
 
-        updateHoursAndMinutes((Button) findViewById(R.id.time_button));
+        updateTime((Button) findViewById(R.id.time_button));
         updateDate((Button) findViewById(R.id.date_button));
 
         tileView = (TileView) findViewById(R.id.tile_view);
@@ -168,12 +168,12 @@ public class MainActivity extends AppCompatActivity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void updateHoursAndMinutes(Button hoursAndMinutesButton) {
-        hoursAndMinutesButton.setText(new SimpleDateFormat("HH:mm").format(selectedTime.getTimeInMillis()));
+    private void updateTime(Button timeButton) {
+        timeButton.setText(CalendarUtils.getTimeString(selectedDateTime));
     }
 
     private void updateDate(Button dateButton) {
-        dateButton.setText(new SimpleDateFormat("dd.MM.yyyy").format(selectedTime.getTimeInMillis()));
+        dateButton.setText(CalendarUtils.getDateString(selectedDateTime));
     }
 
     private void updateTileViewViews() {
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
             final Point location = seat.getLocation();
             final String id = entry.getKey();
 
-            final boolean free = library.isSeatFree(id, "29_5_17", new TimeOfDay(selectedTime.get(Calendar.HOUR), selectedTime.get(Calendar.MINUTE))); // TODO
+            final boolean free = library.isSeatFree(id, selectedDateTime); // TODO
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
@@ -202,11 +202,11 @@ public class MainActivity extends AppCompatActivity {
 
                         dialog.show();
 
-                        final TimeOfDay startTime = new TimeOfDay(selectedTime.get(Calendar.HOUR), selectedTime.get(Calendar.MINUTE));
+                        final TimeOfDay startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
                         final TimeOfDay endTime = startTime.add(1, 0);
 
                         final Button startTimeButton = (Button) dialog.findViewById(R.id.startTimeButton);
-                        startTimeButton.setText(String.format("%02d:%02d", startTime.hour, startTime.minute));
+                        startTimeButton.setText(CalendarUtils.getTimeString(selectedDateTime));
                         startTimeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                         });
 
                         final Button endTimeButton = (Button) dialog.findViewById(R.id.endTimeButton);
-                        endTimeButton.setText(String.format("%02d:%02d", endTime.hour, endTime.minute));
+                        endTimeButton.setText(CalendarUtils.getTimeString(endTime));
                         endTimeButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 //                        TextView nearestReservationLabel = (TextView) dialog.findViewById(R.id.nearestReservationLabel);
 //
-//                        Reservation nearestReservation = library.getNearestReservation(id, "29_5_17", selectedTime);
+//                        Reservation nearestReservation = library.getNearestReservation(id, "29_5_17", selectedDateTime);
 //                        if (nearestReservation == null) {
 //                            nearestReservationLabel.setText("No other reservation today, titparea!");
 //                        } else {
@@ -292,7 +292,7 @@ public class MainActivity extends AppCompatActivity {
         DatePickerDialog mDatePicker = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                selectedTime.set(year, month, dayOfMonth);
+                selectedDateTime.set(year, month, dayOfMonth);
                 updateDate(dateButton);
             }
         }, mCurrentTime.get(Calendar.YEAR), mCurrentTime.get(Calendar.MONTH), mCurrentTime.get(Calendar.DAY_OF_MONTH));
@@ -311,9 +311,9 @@ public class MainActivity extends AppCompatActivity {
                 new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
-                        selectedTime.set(Calendar.HOUR, selectedHour);
-                        selectedTime.set(Calendar.MINUTE, selectedMinute);
-                        updateHoursAndMinutes(timeButton);
+                        selectedDateTime.set(Calendar.HOUR, selectedHour);
+                        selectedDateTime.set(Calendar.MINUTE, selectedMinute);
+                        updateTime(timeButton);
                         updateTileViewViews();
                     }
                 }, mCurrentTime.get(Calendar.HOUR_OF_DAY), mCurrentTime.get(Calendar.MINUTE), true);

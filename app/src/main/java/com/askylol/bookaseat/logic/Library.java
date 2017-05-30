@@ -1,5 +1,6 @@
 package com.askylol.bookaseat.logic;
 
+import com.askylol.bookaseat.utils.CalendarUtils;
 import com.askylol.bookaseat.utils.OpeningHours;
 import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DatabaseError;
@@ -7,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,14 +112,18 @@ public class Library {
         return idToSeat;
     }
 
-    public boolean isSeatFree(String seatId, String date, TimeOfDay time) {
+    public boolean isSeatFree(String seatId, Calendar selectedDateTime) {
         if (!reservations.containsKey(seatId)) {
             return true;
         }
 
+        String date = CalendarUtils.getDateString(selectedDateTime);
+
         if (!reservations.get(seatId).containsKey(date)) {
             return true;
         }
+
+        TimeOfDay time = CalendarUtils.getTimeOfDay(selectedDateTime);
 
         for (Reservation reservation : reservations.get(seatId).get(date).values()) {
             if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfter(time)) {
