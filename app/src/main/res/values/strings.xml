@@ -12,5 +12,4 @@
     <string name="nav_about_us">About Us</string>
     <string name="nav_orders">My Orders</string>
     <string name="nav_opening">Opening Hours</string>
-    <string name="occupancy_time" formatted="false">Showing Occupancy At: %02d:%02d</string>
 </resources>
