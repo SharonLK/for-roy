@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Sharon on 22-May-17.
- */
+
 public class Library {
     private Map<String, Seat> idToSeat = new HashMap<>();
     private OpeningHours openingHours = new OpeningHours();
@@ -31,9 +29,12 @@ public class Library {
      * Reserves the wanted seat by the given user.
      *
      * @param seatId seat to reserve
-     * @param user   user that reserves the seat
+     * @param user user that reserves the seat
+     * @param date date to reserve
+     * @param start reservation start time
+     * @param end reservation end time
      */
-    public void reserve(String seatId, User user, TimeOfDay start, TimeOfDay end) {
+    public void reserve(String seatId, User user, String date, TimeOfDay start, TimeOfDay end) {
         if (libraryRef == null) {
             //TODO: handle, nah
             throw new IllegalStateException("No reference to library on db");
@@ -44,11 +45,23 @@ public class Library {
             return;
         }
 
-        libraryRef.child("reservations")
-                .child(seatId)
-                .child("29_5_17")
-                .push()
-                .setValue(new Reservation(start, end, user.getName()));
+        getReservationsReferenceAt(seatId, date).push().setValue(new Reservation(start, end, user.getName()));
+    }
+
+    /**
+     * Get the reference to a reservation's path.
+     * Works even if path doesn't exist.
+     *
+     * @param seatId id of the seat
+     * @param date date string in the format dd/MM/yyyy
+     * @return reference to reservation's path
+     */
+    private DatabaseReference getReservationsReferenceAt(String seatId, String date) {
+        return libraryRef.getDatabase().getReference(
+                String.format(
+                        "libraries/%s/reservations/%s/%s",
+                        libraryRef.getKey(), seatId, date.replace('.', '_')
+                ));
     }
 
     /**
@@ -117,7 +130,7 @@ public class Library {
             return true;
         }
 
-        String date = CalendarUtils.getDateString(selectedDateTime);
+        String date = CalendarUtils.getDateString(selectedDateTime).replace('.', '_');
 
         if (!reservations.get(seatId).containsKey(date)) {
             return true;

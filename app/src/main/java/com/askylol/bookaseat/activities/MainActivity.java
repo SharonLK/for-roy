@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                         reserveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                library.reserve(id, new User("ylev"), startTime, endTime); // TODO: Update to real user
+                                library.reserve(id, new User("ylev"), CalendarUtils.getDateString(selectedDateTime), startTime, endTime); // TODO: Update to real user
                                 dialog.dismiss();
                             }
                         });
@@ -288,15 +288,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void onDateClick(View view) {
         final Button dateButton = (Button) view;
-        Calendar mCurrentTime = Calendar.getInstance();
         DatePickerDialog mDatePicker = new DatePickerDialog(MainActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 selectedDateTime.set(year, month, dayOfMonth);
                 updateDate(dateButton);
+                updateTileViewViews();
             }
-        }, mCurrentTime.get(Calendar.YEAR), mCurrentTime.get(Calendar.MONTH), mCurrentTime.get(Calendar.DAY_OF_MONTH));
+        }, selectedDateTime.get(Calendar.YEAR), selectedDateTime.get(Calendar.MONTH), selectedDateTime.get(Calendar.DAY_OF_MONTH));
         DatePicker dp = mDatePicker.getDatePicker();
+        Calendar mCurrentTime = Calendar.getInstance();
         dp.setMinDate(mCurrentTime.getTimeInMillis());
         mCurrentTime.add(Calendar.DATE, 6);
         dp.setMaxDate(mCurrentTime.getTimeInMillis());
@@ -306,17 +307,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void onTimeClick(View view) {
         final Button timeButton = (Button) view;
-        Calendar mCurrentTime = Calendar.getInstance();
         TimePickerDialog mTimePicker =
                 new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
-                        selectedDateTime.set(Calendar.HOUR, selectedHour);
+                        selectedDateTime.set(Calendar.HOUR_OF_DAY, selectedHour);
                         selectedDateTime.set(Calendar.MINUTE, selectedMinute);
                         updateTime(timeButton);
                         updateTileViewViews();
                     }
-                }, mCurrentTime.get(Calendar.HOUR_OF_DAY), mCurrentTime.get(Calendar.MINUTE), true);
+                }, selectedDateTime.get(Calendar.HOUR_OF_DAY), selectedDateTime.get(Calendar.MINUTE), true);
         mTimePicker.setTitle("Select Time");
         mTimePicker.show();
     }
