@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
                         final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("Reserve a Seat")
+                                .setTitle(R.string.reserve_a_seat)
                                 .setView(R.layout.dialog_reservation)
                                 .create();
 

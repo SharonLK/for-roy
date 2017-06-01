@@ -16,4 +16,5 @@
     <string name="end_time">End time:</string>
     <string name="reserve">Reserve</string>
     <string name="cancel">Cancel</string>
+    <string name="reserve_a_seat">Reserve a Seat</string>
 </resources>
