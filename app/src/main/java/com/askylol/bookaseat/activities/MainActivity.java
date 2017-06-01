@@ -276,6 +276,7 @@ public class MainActivity extends AppCompatActivity {
             ImageView logo = new ImageView(this);
             logo.setImageResource(free ? R.drawable.chair_icon : R.drawable.chair_icon_occupied);
             RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            logoLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             logoLayoutParams.leftMargin = location.x - 50;
             logoLayoutParams.topMargin = location.y - 50;
             logoLayoutParams.width = 100;
