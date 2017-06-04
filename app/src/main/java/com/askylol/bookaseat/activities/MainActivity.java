@@ -34,6 +34,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.hotspots.HotSpot;
 
@@ -44,6 +45,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String SELECTED_DATE_TIME_KEY = "selectedDateTimeKey";
     private ActionBarDrawerToggle mDrawerToggle;
     private Library library;
     private TileView tileView;
@@ -166,6 +168,22 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putLong(SELECTED_DATE_TIME_KEY, selectedDateTime.getTimeInMillis());
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        selectedDateTime.setTimeInMillis(savedInstanceState.getLong(SELECTED_DATE_TIME_KEY));
+        updateTime((Button)findViewById(R.id.time_button));
+        updateDate((Button)findViewById(R.id.date_button));
     }
 
     private void updateTime(Button timeButton) {
