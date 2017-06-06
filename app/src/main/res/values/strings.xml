@@ -19,4 +19,6 @@
     <string name="reserve_a_seat">Reserve a Seat</string>
     <string name="ok">OK</string>
     <string name="set">Set</string>
+    <string name="invalid_duration">Invalid duration, please make sure end time is after start time</string>
+    <string name="duration_message" formatted="false">Duration: %d:%02d</string>
 </resources>

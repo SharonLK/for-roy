@@ -20,4 +20,6 @@
     <string name="reserve_a_seat">הזמן מקום</string>
     <string name="ok">אישור</string>
     <string name="set">שמור</string>
+    <string name="invalid_duration">משך זמן לא תקין, אנא וודא כי זמן הסיום אחרי זמן ההתחלה</string>
+    <string name="duration_message" formatted="false">משך זמן: %d:%02d</string>
 </resources>

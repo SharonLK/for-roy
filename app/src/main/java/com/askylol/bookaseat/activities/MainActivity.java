@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -360,6 +361,12 @@ public class MainActivity extends AppCompatActivity {
         long hours = diff / 60;
         long mins = diff % 60;
 
-        label.setText(String.format("Duration: %d:%02d", hours, mins));
+        if (diff <= 0) {
+            label.setText(R.string.invalid_duration);
+            label.setTextColor(Color.RED);
+        } else {
+            label.setText(String.format(getString(R.string.duration_message), hours, mins));
+            label.setTextColor(Color.BLACK);
+        }
     }
 }
