@@ -33,6 +33,7 @@
             android:layout_weight="1" />
 
         <EditText
+            android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/e_mail_address" />
@@ -40,20 +41,23 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/password" />
+            android:hint="@string/password"
+            android:visibility="gone" />
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:text="@string/keep_me_logged_in" />
+            android:text="@string/keep_me_logged_in"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:onClick="loginClick"
             android:text="@string/log_in"
             android:textAllCaps="false" />
 
@@ -62,13 +66,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="6dp"
-            android:text="@string/forgot_password" />
+            android:text="@string/forgot_password"
+            android:visibility="gone" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/sign_up" />
+            android:text="@string/sign_up"
+            android:visibility="gone" />
 
         <View
             android:layout_width="match_parent"
