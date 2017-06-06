@@ -204,19 +204,30 @@ public class MainActivity extends AppCompatActivity {
             tileView.removeView(view);
         }
 
-        Map<String, Map<String, Map<String, Reservation>>> reservations = library.getReservations();
-
         for (Map.Entry<String, Seat> entry : library.getIdToSeat().entrySet()) {
             Seat seat = entry.getValue();
             final Point location = seat.getLocation();
             final String id = entry.getKey();
 
+            final boolean reservedByUser = library.reservedByUser(selectedDateTime, Data.INSTANCE.USERNAME);
             final boolean free = library.isSeatFree(id, selectedDateTime); // TODO
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
             hotSpot.set(location.x - 50, location.y - 50, location.x + 50, location.y + 50);
-            if (free) {
+
+            tileView.addHotSpot(hotSpot);
+
+            RelativeLayout relativeLayout = new RelativeLayout(this);
+            ImageView logo = new ImageView(this);
+
+            if (library.reservedByUser(id, selectedDateTime, Data.INSTANCE.USERNAME)) {
+                logo.setImageResource(R.drawable.chair_icon_reserved);
+            } else if (reservedByUser) {
+                logo.setImageResource(R.drawable.chair_unavailable);
+            } else if (free) {
+                logo.setImageResource(R.drawable.chair_icon);
+
                 hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
                     @Override
                     public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
@@ -254,17 +265,6 @@ public class MainActivity extends AppCompatActivity {
                         recalculateInfoLabel(dialog);
                     }
                 });
-            }
-
-            tileView.addHotSpot(hotSpot);
-
-            RelativeLayout relativeLayout = new RelativeLayout(this);
-            ImageView logo = new ImageView(this);
-
-            if (free) {
-                logo.setImageResource(R.drawable.chair_icon);
-            } else if (library.reservedByUser(id, selectedDateTime, Data.INSTANCE.USERNAME)) {
-                logo.setImageResource(R.drawable.chair_icon_reserved);
             } else {
                 logo.setImageResource(R.drawable.chair_icon_occupied);
             }
