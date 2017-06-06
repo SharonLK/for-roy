@@ -2,6 +2,7 @@ package com.askylol.bookaseat.activities;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 
@@ -34,7 +36,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.hotspots.HotSpot;
 
@@ -182,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         selectedDateTime.setTimeInMillis(savedInstanceState.getLong(SELECTED_DATE_TIME_KEY));
-        updateTime((Button)findViewById(R.id.time_button));
-        updateDate((Button)findViewById(R.id.date_button));
+        updateTime((Button) findViewById(R.id.time_button));
+        updateDate((Button) findViewById(R.id.date_button));
     }
 
     private void updateTime(Button timeButton) {
@@ -223,52 +224,11 @@ public class MainActivity extends AppCompatActivity {
                         final TimeOfDay startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
                         final TimeOfDay endTime = startTime.add(1, 0);
 
-                        final Button startTimeButton = (Button) dialog.findViewById(R.id.startTimeButton);
-                        startTimeButton.setText(CalendarUtils.getTimeString(selectedDateTime));
-                        startTimeButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                                    @Override
-                                    public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
-                                        startTime.hour = selectedHour;
-                                        startTime.minute = selectedMinute;
-                                        startTimeButton.setText(selectedHour + ":" + selectedMinute);
-                                    }
-                                }, startTime.hour, startTime.minute, true);
-                                timePickerDialog.setTitle("Select Time");
-                                timePickerDialog.show();
-                            }
-                        });
-
-                        final Button endTimeButton = (Button) dialog.findViewById(R.id.endTimeButton);
-                        endTimeButton.setText(CalendarUtils.getTimeString(endTime));
-                        endTimeButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
-                                    @Override
-                                    public void onTimeSet(TimePicker view, int selectedHour, int selectedMinute) {
-                                        endTime.hour = selectedHour;
-                                        endTime.minute = selectedMinute;
-                                        endTimeButton.setText(selectedHour + ":" + selectedMinute);
-                                    }
-                                }, endTime.hour, endTime.minute, true);
-                                timePickerDialog.setTitle("Select Time");
-                                timePickerDialog.show();
-                            }
-                        });
+                        initializeTimeButton((Button) dialog.findViewById(R.id.startTimeButton), startTime);
+                        initializeTimeButton((Button) dialog.findViewById(R.id.endTimeButton), endTime);
 
                         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
                         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
-//                        TextView nearestReservationLabel = (TextView) dialog.findViewById(R.id.nearestReservationLabel);
-//
-//                        Reservation nearestReservation = library.getNearestReservation(id, "29_5_17", selectedDateTime);
-//                        if (nearestReservation == null) {
-//                            nearestReservationLabel.setText("No other reservation today, titparea!");
-//                        } else {
-//                            nearestReservationLabel.setText("Nearest reservation starts at: " + nearestReservation.getStart());
-//                        }
 
                         reserveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -338,5 +298,47 @@ public class MainActivity extends AppCompatActivity {
                 }, selectedDateTime.get(Calendar.HOUR_OF_DAY), selectedDateTime.get(Calendar.MINUTE), true);
         mTimePicker.setTitle("Select Time");
         mTimePicker.show();
+    }
+
+    private void initializeTimeButton(final Button button, final TimeOfDay timeOfDay) {
+        timeOfDay.minute = (int) Math.ceil(timeOfDay.minute / 15.0) * 15;
+        timeOfDay.hour = timeOfDay.hour + (timeOfDay.minute > 45 ? 1 : 0);
+
+        button.setText(CalendarUtils.getTimeString(timeOfDay));
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog timePickerDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setView(R.layout.time_spinner)
+                        .setNegativeButton(R.string.cancel, null)
+                        .create();
+
+                timePickerDialog.setButton(TimePickerDialog.BUTTON_POSITIVE, getString(R.string.set), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        timeOfDay.hour = ((NumberPicker) timePickerDialog.findViewById(R.id.hours)).getValue();
+                        timeOfDay.minute = ((NumberPicker) timePickerDialog.findViewById(R.id.minutes)).getValue() * 15;
+                        button.setText(CalendarUtils.getTimeString(timeOfDay));
+                    }
+                });
+
+                timePickerDialog.show();
+
+                NumberPicker minutesPicker = (NumberPicker) timePickerDialog.findViewById(R.id.minutes);
+                NumberPicker hoursPicker = (NumberPicker) timePickerDialog.findViewById(R.id.hours);
+
+                int quarter = (int) Math.ceil(timeOfDay.minute / 15.0);
+                minutesPicker.setMinValue(0);
+                minutesPicker.setMaxValue(3);
+                minutesPicker.setDisplayedValues(new String[]{"00", "15", "30", "45"});
+                minutesPicker.setValue(quarter == 4 ? 0 : quarter);
+                hoursPicker.setMinValue(0);
+                hoursPicker.setMaxValue(23);
+                hoursPicker.setDisplayedValues(new String[]{"00", "01", "02", "03",
+                        "04", "05", "06", "07", "08", "09", "10", "11", "12", "13",
+                        "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"});
+                hoursPicker.setValue(timeOfDay.hour + (timeOfDay.minute > 45 ? 1 : 0));
+            }
+        });
     }
 }

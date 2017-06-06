@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal">
+
+    <NumberPicker
+        android:id="@+id/hours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/nekudataim"
+        android:descendantFocusability="blocksDescendants" />
+
+    <TextView
+        android:id="@id/nekudataim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/minutes"
+        android:layout_alignTop="@id/hours"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
+        android:text=":" />
+
+    <NumberPicker
+        android:id="@id/minutes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/nekudataim"
+        android:descendantFocusability="blocksDescendants" />
+
+</RelativeLayout>

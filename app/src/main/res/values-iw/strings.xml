@@ -18,4 +18,6 @@
     <string name="reserve">הזמן</string>
     <string name="start_time">זמן התחלה</string>
     <string name="reserve_a_seat">הזמן מקום</string>
+    <string name="ok">אישור</string>
+    <string name="set">שמור</string>
 </resources>

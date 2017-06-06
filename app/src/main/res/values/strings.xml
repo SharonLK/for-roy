@@ -17,4 +17,6 @@
     <string name="reserve">Reserve</string>
     <string name="cancel">Cancel</string>
     <string name="reserve_a_seat">Reserve a Seat</string>
+    <string name="ok">OK</string>
+    <string name="set">Set</string>
 </resources>
