@@ -28,9 +28,11 @@ import android.widget.TimePicker;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
+import com.askylol.bookaseat.logic.Reservation;
 import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.logic.User;
 import com.askylol.bookaseat.utils.CalendarUtils;
+import com.askylol.bookaseat.utils.Data;
 import com.askylol.bookaseat.utils.Point;
 import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DataSnapshot;
@@ -202,6 +204,8 @@ public class MainActivity extends AppCompatActivity {
             tileView.removeView(view);
         }
 
+        Map<String, Map<String, Map<String, Reservation>>> reservations = library.getReservations();
+
         for (Map.Entry<String, Seat> entry : library.getIdToSeat().entrySet()) {
             Seat seat = entry.getValue();
             final Point location = seat.getLocation();
@@ -256,7 +260,15 @@ public class MainActivity extends AppCompatActivity {
 
             RelativeLayout relativeLayout = new RelativeLayout(this);
             ImageView logo = new ImageView(this);
-            logo.setImageResource(free ? R.drawable.chair_icon : R.drawable.chair_icon_occupied);
+
+            if (free) {
+                logo.setImageResource(R.drawable.chair_icon);
+            } else if (library.reservedByUser(id, selectedDateTime, Data.INSTANCE.USERNAME)) {
+                logo.setImageResource(R.drawable.chair_icon_reserved);
+            } else {
+                logo.setImageResource(R.drawable.chair_icon_occupied);
+            }
+
             RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             logoLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             logoLayoutParams.leftMargin = location.x - 50;

@@ -29,10 +29,10 @@ public class Library {
      * Reserves the wanted seat by the given user.
      *
      * @param seatId seat to reserve
-     * @param user user that reserves the seat
-     * @param date date to reserve
-     * @param start reservation start time
-     * @param end reservation end time
+     * @param user   user that reserves the seat
+     * @param date   date to reserve
+     * @param start  reservation start time
+     * @param end    reservation end time
      */
     public void reserve(String seatId, User user, String date, TimeOfDay start, TimeOfDay end) {
         if (libraryRef == null) {
@@ -53,7 +53,7 @@ public class Library {
      * Works even if path doesn't exist.
      *
      * @param seatId id of the seat
-     * @param date date string in the format dd/MM/yyyy
+     * @param date   date string in the format dd/MM/yyyy
      * @return reference to reservation's path
      */
     private DatabaseReference getReservationsReferenceAt(String seatId, String date) {
@@ -145,6 +145,29 @@ public class Library {
         }
 
         return true;
+    }
+
+    public boolean reservedByUser(String seatId, Calendar selectedDateTime, String username) {
+        if (!reservations.containsKey(seatId)) {
+            return false;
+        }
+
+        String date = CalendarUtils.getDateString(selectedDateTime).replace('.', '_');
+
+        if (!reservations.get(seatId).containsKey(date)) {
+            return false;
+        }
+
+        TimeOfDay time = CalendarUtils.getTimeOfDay(selectedDateTime);
+
+        for (Reservation reservation : reservations.get(seatId).get(date).values()) {
+            if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfter(time) &&
+                    reservation.getUser().toLowerCase().equals(username.toLowerCase())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public Reservation getNearestReservation(String seatId, String date, TimeOfDay time) {
