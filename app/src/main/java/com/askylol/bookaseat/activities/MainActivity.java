@@ -351,6 +351,9 @@ public class MainActivity extends AppCompatActivity {
     private void recalculateInfoLabel(AlertDialog dialog) {
         TextView label = (TextView) dialog.findViewById(R.id.infoLabel);
 
+        Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
+        Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
+
         String startTime[] = ((Button) dialog.findViewById(R.id.startTimeButton)).getText().toString().split(":");
         String endTime[] = ((Button) dialog.findViewById(R.id.endTimeButton)).getText().toString().split(":");
 
@@ -364,9 +367,11 @@ public class MainActivity extends AppCompatActivity {
         if (diff <= 0) {
             label.setText(R.string.invalid_duration);
             label.setTextColor(Color.RED);
+            reserveButton.setEnabled(false);
         } else {
             label.setText(String.format(getString(R.string.duration_message), hours, mins));
             label.setTextColor(Color.BLACK);
+            reserveButton.setEnabled(true);
         }
     }
 }
