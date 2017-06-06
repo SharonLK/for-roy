@@ -147,6 +147,26 @@ public class Library {
         return true;
     }
 
+    public boolean isSeatFree(Calendar startDateTime, Calendar endDateTime) {
+        TimeOfDay start = CalendarUtils.getTimeOfDay(startDateTime);
+        TimeOfDay end = CalendarUtils.getTimeOfDay(endDateTime);
+
+        for (Map<String, Map<String, Reservation>> seatReservations : reservations.values()) {
+            for (Map<String, Reservation> dateReservations : seatReservations.values()) {
+                for (Reservation reservation : dateReservations.values()) {
+                    TimeOfDay resStart = reservation.getStart();
+                    TimeOfDay resEnd = reservation.getEnd();
+
+                    if (start.isBefore(resStart) && resEnd.isBefore(end)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     public boolean reservedByUser(String seatId, Calendar selectedDateTime, String username) {
         if (!reservations.containsKey(seatId)) {
             return false;

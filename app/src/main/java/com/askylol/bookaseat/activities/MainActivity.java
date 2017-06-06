@@ -28,7 +28,6 @@ import android.widget.TimePicker;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
-import com.askylol.bookaseat.logic.Reservation;
 import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.logic.User;
 import com.askylol.bookaseat.utils.CalendarUtils;
@@ -376,10 +375,20 @@ public class MainActivity extends AppCompatActivity {
         long hours = diff / 60;
         long mins = diff % 60;
 
+        Calendar startCalendar = (Calendar) selectedDateTime.clone();
+        startCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(startTime[0]));
+        startCalendar.set(Calendar.MINUTE, Integer.parseInt(startTime[1]));
+        Calendar endCalendar = (Calendar) selectedDateTime.clone();
+        endCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(endTime[0]));
+        endCalendar.set(Calendar.MINUTE, Integer.parseInt(endTime[1]));
+
         if (diff <= 0) {
             label.setText(R.string.invalid_duration);
             label.setTextColor(Color.RED);
             reserveButton.setEnabled(false);
+        } else if (!library.isSeatFree(startCalendar, endCalendar)) {
+            label.setText("Seat is already reserved for that duration, please choose another time interval");
+            label.setTextColor(Color.RED);
         } else {
             label.setText(String.format(getString(R.string.duration_message), hours, mins));
             label.setTextColor(Color.BLACK);
