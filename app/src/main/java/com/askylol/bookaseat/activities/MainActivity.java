@@ -22,6 +22,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.askylol.bookaseat.R;
@@ -224,8 +225,8 @@ public class MainActivity extends AppCompatActivity {
                         final TimeOfDay startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
                         final TimeOfDay endTime = startTime.add(1, 0);
 
-                        initializeTimeButton((Button) dialog.findViewById(R.id.startTimeButton), startTime);
-                        initializeTimeButton((Button) dialog.findViewById(R.id.endTimeButton), endTime);
+                        initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.startTimeButton), startTime);
+                        initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.endTimeButton), endTime);
 
                         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
                         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
@@ -244,6 +245,8 @@ public class MainActivity extends AppCompatActivity {
                                 dialog.dismiss();
                             }
                         });
+
+                        recalculateInfoLabel(dialog);
                     }
                 });
             }
@@ -300,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
         mTimePicker.show();
     }
 
-    private void initializeTimeButton(final Button button, final TimeOfDay timeOfDay) {
+    private void initializeTimeButton(final AlertDialog alertDialog, final Button button, final TimeOfDay timeOfDay) {
         timeOfDay.minute = (int) Math.ceil(timeOfDay.minute / 15.0) * 15;
         timeOfDay.hour = timeOfDay.hour + (timeOfDay.minute > 45 ? 1 : 0);
 
@@ -319,6 +322,8 @@ public class MainActivity extends AppCompatActivity {
                         timeOfDay.hour = ((NumberPicker) timePickerDialog.findViewById(R.id.hours)).getValue();
                         timeOfDay.minute = ((NumberPicker) timePickerDialog.findViewById(R.id.minutes)).getValue() * 15;
                         button.setText(CalendarUtils.getTimeString(timeOfDay));
+
+                        recalculateInfoLabel(alertDialog);
                     }
                 });
 
@@ -340,5 +345,21 @@ public class MainActivity extends AppCompatActivity {
                 hoursPicker.setValue(timeOfDay.hour + (timeOfDay.minute > 45 ? 1 : 0));
             }
         });
+    }
+
+    private void recalculateInfoLabel(AlertDialog dialog) {
+        TextView label = (TextView) dialog.findViewById(R.id.infoLabel);
+
+        String startTime[] = ((Button) dialog.findViewById(R.id.startTimeButton)).getText().toString().split(":");
+        String endTime[] = ((Button) dialog.findViewById(R.id.endTimeButton)).getText().toString().split(":");
+
+        long startMins = Integer.parseInt(startTime[0]) * 60 + Integer.parseInt(startTime[1]);
+        long endMins = Integer.parseInt(endTime[0]) * 60 + Integer.parseInt(endTime[1]);
+
+        long diff = endMins - startMins;
+        long hours = diff / 60;
+        long mins = diff % 60;
+
+        label.setText(String.format("Duration: %d:%02d", hours, mins));
     }
 }
