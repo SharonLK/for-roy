@@ -21,4 +21,7 @@
     <string name="set">Set</string>
     <string name="invalid_duration">Invalid duration, please make sure end time is after start time</string>
     <string name="duration_message" formatted="false">Duration: %d:%02d</string>
+    <string name="free_seat_question">Do you wish to free this seat?</string>
+    <string name="seat_already_reserved">Seat is already reserved for that duration. Please choose another time interval</string>
+    <string name="yes">yes</string>
 </resources>

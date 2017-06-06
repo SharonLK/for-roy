@@ -28,6 +28,7 @@ import android.widget.TimePicker;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Library;
+import com.askylol.bookaseat.logic.Reservation;
 import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.logic.User;
 import com.askylol.bookaseat.utils.CalendarUtils;
@@ -208,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             final Point location = seat.getLocation();
             final String id = entry.getKey();
 
-            final boolean reservedByUser = library.reservedByUser(selectedDateTime, Data.INSTANCE.USERNAME);
+            final boolean reservedByUser = library.reservationByUser(selectedDateTime, Data.INSTANCE.USERNAME);
             final boolean free = library.isSeatFree(id, selectedDateTime); // TODO
 
             HotSpot hotSpot = new HotSpot();
@@ -220,8 +221,30 @@ public class MainActivity extends AppCompatActivity {
             RelativeLayout relativeLayout = new RelativeLayout(this);
             ImageView logo = new ImageView(this);
 
-            if (library.reservedByUser(id, selectedDateTime, Data.INSTANCE.USERNAME)) {
+            final Reservation reservation = library.reservationByUser(id, selectedDateTime, Data.INSTANCE.USERNAME);
+
+            if (reservation != null) {
                 logo.setImageResource(R.drawable.chair_icon_reserved);
+
+                hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
+                    @Override
+                    public void onHotSpotTap(HotSpot hotSpot, int x, int y) {
+                        final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                .setTitle(R.string.free_seat_question)
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        library.removeReservation(id,
+                                                CalendarUtils.getDateString(selectedDateTime).replace('.', '_'),
+                                                reservation);
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, null)
+                                .create();
+
+                        dialog.show();
+                    }
+                });
             } else if (reservedByUser) {
                 logo.setImageResource(R.drawable.chair_unavailable);
             } else if (free) {
@@ -249,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
                         reserveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                library.reserve(id, new User("ylev"), CalendarUtils.getDateString(selectedDateTime), startTime, endTime); // TODO: Update to real user
+                                library.reserve(id, new User(Data.INSTANCE.USERNAME), CalendarUtils.getDateString(selectedDateTime), startTime, endTime); // TODO: Update to real user
                                 dialog.dismiss();
                             }
                         });
@@ -387,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
             label.setTextColor(Color.RED);
             reserveButton.setEnabled(false);
         } else if (!library.isSeatFree(startCalendar, endCalendar)) {
-            label.setText("Seat is already reserved for that duration, please choose another time interval");
+            label.setText(R.string.seat_already_reserved);
             label.setTextColor(Color.RED);
         } else {
             label.setText(String.format(getString(R.string.duration_message), hours, mins));

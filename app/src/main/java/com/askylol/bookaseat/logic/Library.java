@@ -3,9 +3,11 @@ package com.askylol.bookaseat.logic;
 import com.askylol.bookaseat.utils.CalendarUtils;
 import com.askylol.bookaseat.utils.OpeningHours;
 import com.askylol.bookaseat.utils.TimeOfDay;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -167,15 +169,15 @@ public class Library {
         return true;
     }
 
-    public boolean reservedByUser(String seatId, Calendar selectedDateTime, String username) {
+    public Reservation reservationByUser(String seatId, Calendar selectedDateTime, String username) {
         if (!reservations.containsKey(seatId)) {
-            return false;
+            return null;
         }
 
         String date = CalendarUtils.getDateString(selectedDateTime).replace('.', '_');
 
         if (!reservations.get(seatId).containsKey(date)) {
-            return false;
+            return null;
         }
 
         TimeOfDay time = CalendarUtils.getTimeOfDay(selectedDateTime);
@@ -183,14 +185,14 @@ public class Library {
         for (Reservation reservation : reservations.get(seatId).get(date).values()) {
             if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfter(time) &&
                     reservation.getUser().toLowerCase().equals(username.toLowerCase())) {
-                return true;
+                return reservation;
             }
         }
 
-        return false;
+        return null;
     }
 
-    public boolean reservedByUser(Calendar selectedDateTime, String username) {
+    public boolean reservationByUser(Calendar selectedDateTime, String username) {
         for (String seatId : reservations.keySet()) {
             String date = CalendarUtils.getDateString(selectedDateTime).replace('.', '_');
 
@@ -239,5 +241,23 @@ public class Library {
 
     public void setLibraryRef(DatabaseReference libraryRef) {
         this.libraryRef = libraryRef;
+    }
+
+    public void removeReservation(String seatId, String date, final Reservation reservation) {
+        getReservationsReferenceAt(seatId, date).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Reservation> reservationsMap = (Map<String, Reservation>) dataSnapshot.getValue();
+                for (Map.Entry<String, Reservation> entry : reservationsMap.entrySet()) {
+                    if (dataSnapshot.child(entry.getKey()).getValue(Reservation.class).equals(reservation))
+                        dataSnapshot.getRef().child(entry.getKey()).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
