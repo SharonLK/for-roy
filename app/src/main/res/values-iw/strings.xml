@@ -25,4 +25,5 @@
     <string name="free_seat_question">האם ברצונך לשחרר את המושב?</string>
     <string name="seat_already_reserved">המושב כבר תפוס בזמן שהוגדר. אנא בחר טווח זמנים שונה</string>
     <string name="yes">כן</string>
+    <string name="cant_reserve_past">לא ניתן לשמור מקום לזמן שעבר</string>
 </resources>

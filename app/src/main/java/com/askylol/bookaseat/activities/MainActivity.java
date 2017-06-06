@@ -412,6 +412,11 @@ public class MainActivity extends AppCompatActivity {
         } else if (!library.isSeatFree(startCalendar, endCalendar)) {
             label.setText(R.string.seat_already_reserved);
             label.setTextColor(Color.RED);
+            reserveButton.setEnabled(false);
+        } else if (startCalendar.getTimeInMillis() < Calendar.getInstance().getTimeInMillis() - 1000*60){
+            label.setText(R.string.cant_reserve_past);
+            label.setTextColor(Color.RED);
+            reserveButton.setEnabled(false);
         } else {
             label.setText(String.format(getString(R.string.duration_message), hours, mins));
             label.setTextColor(Color.BLACK);
