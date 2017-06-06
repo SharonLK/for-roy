@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
         }, selectedDateTime.get(Calendar.YEAR), selectedDateTime.get(Calendar.MONTH), selectedDateTime.get(Calendar.DAY_OF_MONTH));
         DatePicker dp = mDatePicker.getDatePicker();
         Calendar mCurrentTime = Calendar.getInstance();
-        dp.setMinDate(mCurrentTime.getTimeInMillis());
+        dp.setMinDate(mCurrentTime.getTimeInMillis() - 1000);
         mCurrentTime.add(Calendar.DATE, 6);
         dp.setMaxDate(mCurrentTime.getTimeInMillis());
         mDatePicker.setTitle("Select Date");
