@@ -33,6 +33,8 @@ import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.logic.User;
 import com.askylol.bookaseat.utils.CalendarUtils;
 import com.askylol.bookaseat.utils.Data;
+import com.askylol.bookaseat.utils.OpeningHours;
+import com.askylol.bookaseat.utils.Pair;
 import com.askylol.bookaseat.utils.Point;
 import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DataSnapshot;
@@ -154,7 +156,25 @@ public class MainActivity extends AppCompatActivity {
                             break;
                     }
                     if (c != null) {
-                        startActivity(new Intent(MainActivity.this, c));
+                        Intent intent = new Intent(MainActivity.this, c);
+                        if (c == OpeningHoursActivity.class) {
+                            Map<String, Pair<TimeOfDay, TimeOfDay>> ws = library.getOpeningHours().getWeeklySchedule();
+                            for (OpeningHours.Day day : OpeningHours.Day.values()) {
+                                Pair<TimeOfDay, TimeOfDay> hPair = ws.get(day.toString());
+                                ArrayList<Integer> tmp;
+                                if (hPair != null) {
+                                   tmp = new ArrayList<>();
+                                    tmp.add(hPair.first.hour);
+                                    tmp.add(hPair.first.minute);
+                                    tmp.add(hPair.second.hour);
+                                    tmp.add(hPair.second.minute);
+                                } else {
+                                    tmp = null;
+                                }
+                                intent.putIntegerArrayListExtra(day.toString(), tmp);
+                            }
+                        }
+                        startActivity(intent);
                         drawerLayout.closeDrawers();
                     }
                     return true;

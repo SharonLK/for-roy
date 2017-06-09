@@ -25,4 +25,5 @@
     <string name="seat_already_reserved">Seat is already reserved for that duration. Please choose another time interval</string>
     <string name="yes">yes</string>
     <string name="cant_reserve_past">Can not reserve a seat for past time</string>
+    <string name="closed">Closed</string>
 </resources>
