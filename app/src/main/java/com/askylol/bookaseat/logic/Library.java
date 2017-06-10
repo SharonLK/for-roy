@@ -96,10 +96,18 @@ public class Library {
                 });
     }
 
+    /**
+     * @return current library opening hours
+     */
     public OpeningHours getOpeningHours() {
         return openingHours;
     }
 
+    /**
+     * Sets libraries' opening hours to the given parameter.
+     *
+     * @param openingHours new opening hours
+     */
     public void setOpeningHours(OpeningHours openingHours) {
         this.openingHours = openingHours;
     }
@@ -129,6 +137,13 @@ public class Library {
         return idToSeat;
     }
 
+    /**
+     * Checks whether the requested seat is free at the selected time
+     *
+     * @param seatId           seat to check
+     * @param selectedDateTime date and time of reservation
+     * @return <code>true</code> if seat is free, <code>false</code> otherwise
+     */
     public boolean isSeatFree(String seatId, Calendar selectedDateTime) {
         if (!reservations.containsKey(seatId)) {
             return true;
@@ -171,6 +186,15 @@ public class Library {
         return true;
     }
 
+    /**
+     * Returns a reservations made by the given user for the requested seat at the given time and
+     * date.
+     *
+     * @param seatId           seat id
+     * @param selectedDateTime time and date of reservation
+     * @param username         user who reserved the seat
+     * @return reservation if it was found, <code>null</code> otherwise
+     */
     public Reservation reservationByUser(String seatId, Calendar selectedDateTime, String username) {
         if (!reservations.containsKey(seatId)) {
             return null;
@@ -194,6 +218,13 @@ public class Library {
         return null;
     }
 
+    /**
+     * Get a list of all reservations made by the given user. Each reservation is paired with the
+     * date it was made for.
+     *
+     * @param username username of the user
+     * @return list of dates and reservations the user made
+     */
     public List<Pair<String, Reservation>> reservationsByUser(String username) {
         List<Pair<String, Reservation>> r = new ArrayList<>();
 
@@ -212,6 +243,13 @@ public class Library {
         return r;
     }
 
+    /**
+     * Checks whether there is a seat reserved by the user at the given date and time
+     *
+     * @param selectedDateTime date and time of reservation
+     * @param username         username of the user
+     * @return <code>true</code> if user has a reservation, <code>false</code> otherwise
+     */
     public boolean reservationByUser(Calendar selectedDateTime, String username) {
         for (String seatId : reservations.keySet()) {
             String date = CalendarUtils.getDateString(selectedDateTime).replace('.', '_');
@@ -255,6 +293,10 @@ public class Library {
         return nearest;
     }
 
+    /**
+     * @param id id of the seat
+     * @return seat object represented by the given id
+     */
     private Seat getSeatById(String id) {
         return idToSeat.get(id);
     }
