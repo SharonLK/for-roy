@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String SELECTED_DATE_TIME_KEY = "selectedDateTimeKey";
     private ActionBarDrawerToggle mDrawerToggle;
-    private Library library;
     private TileView tileView;
 
     private List<View> views = new ArrayList<>();
@@ -64,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
     ValueEventListener libraryChangedListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            library = dataSnapshot.getValue(Library.class);
-            library.setLibraryRef(dataSnapshot.getRef());
+            Data.INSTANCE.library = dataSnapshot.getValue(Library.class);
+            Data.INSTANCE.library.setLibraryRef(dataSnapshot.getRef());
             updateTileViewViews();
         }
 
@@ -94,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
         libraryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                library = dataSnapshot.getValue(Library.class);
-                library.setLibraryRef(libraryRef);
+                Data.INSTANCE.library = dataSnapshot.getValue(Library.class);
+                Data.INSTANCE.library.setLibraryRef(libraryRef);
                 tileView.addDetailLevel(1.0f, "tile-%d_%d.png", 256, 256);
                 libraryChangedListener.onDataChange(dataSnapshot);
                 libraryRef.addValueEventListener(libraryChangedListener);
@@ -158,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                     if (c != null) {
                         Intent intent = new Intent(MainActivity.this, c);
                         if (c == OpeningHoursActivity.class) {
-                            Map<String, Pair<TimeOfDay, TimeOfDay>> ws = library.getOpeningHours().getWeeklySchedule();
+                            Map<String, Pair<TimeOfDay, TimeOfDay>> ws = Data.INSTANCE.library.getOpeningHours().getWeeklySchedule();
                             for (OpeningHours.Day day : OpeningHours.Day.values()) {
                                 Pair<TimeOfDay, TimeOfDay> hPair = ws.get(day.toString());
                                 ArrayList<Integer> tmp;
@@ -224,13 +223,13 @@ public class MainActivity extends AppCompatActivity {
             tileView.removeView(view);
         }
 
-        for (Map.Entry<String, Seat> entry : library.getIdToSeat().entrySet()) {
+        for (Map.Entry<String, Seat> entry : Data.INSTANCE.library.getIdToSeat().entrySet()) {
             Seat seat = entry.getValue();
             final Point location = seat.getLocation();
             final String id = entry.getKey();
 
-            final boolean reservedByUser = library.reservationByUser(selectedDateTime, Data.INSTANCE.USERNAME);
-            final boolean free = library.isSeatFree(id, selectedDateTime); // TODO
+            final boolean reservedByUser = Data.INSTANCE.library.reservationByUser(selectedDateTime, Data.INSTANCE.username);
+            final boolean free = Data.INSTANCE.library.isSeatFree(id, selectedDateTime); // TODO
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
@@ -241,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
             RelativeLayout relativeLayout = new RelativeLayout(this);
             ImageView logo = new ImageView(this);
 
-            final Reservation reservation = library.reservationByUser(id, selectedDateTime, Data.INSTANCE.USERNAME);
+            final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedDateTime, Data.INSTANCE.username);
 
             if (reservation != null) {
                 logo.setImageResource(R.drawable.chair_icon_reserved);
@@ -254,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        library.removeReservation(id,
+                                        Data.INSTANCE.library.removeReservation(id,
                                                 CalendarUtils.getDateString(selectedDateTime).replace('.', '_'),
                                                 reservation);
                                     }
@@ -292,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
                         reserveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                library.reserve(id, new User(Data.INSTANCE.USERNAME), CalendarUtils.getDateString(selectedDateTime), startTime, endTime); // TODO: Update to real user
+                                Data.INSTANCE.library.reserve(id, new User(Data.INSTANCE.username), CalendarUtils.getDateString(selectedDateTime), startTime, endTime); // TODO: Update to real user
                                 dialog.dismiss();
                             }
                         });
@@ -429,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
             label.setText(R.string.invalid_duration);
             label.setTextColor(Color.RED);
             reserveButton.setEnabled(false);
-        } else if (!library.isSeatFree(startCalendar, endCalendar)) {
+        } else if (!Data.INSTANCE.library.isSeatFree(startCalendar, endCalendar)) {
             label.setText(R.string.seat_already_reserved);
             label.setTextColor(Color.RED);
             reserveButton.setEnabled(false);

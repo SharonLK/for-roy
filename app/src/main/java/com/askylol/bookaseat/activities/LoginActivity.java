@@ -16,7 +16,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        if (Data.INSTANCE.USERNAME != null) {
+        if (Data.INSTANCE.username != null) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     public void loginClick(View view) {
         EditText username = (EditText) findViewById(R.id.emailEditText);
 
-        Data.INSTANCE.USERNAME = username.getText().toString();
+        Data.INSTANCE.username = username.getText().toString();
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
