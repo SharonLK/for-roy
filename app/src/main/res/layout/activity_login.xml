@@ -41,16 +41,14 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/password"
-            android:visibility="gone" />
+            android:hint="@string/password" />
 
         <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:text="@string/keep_me_logged_in"
-            android:visibility="gone" />
+            android:text="@string/keep_me_logged_in" />
 
         <Button
             android:id="@+id/button"
@@ -66,15 +64,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="6dp"
-            android:text="@string/forgot_password"
-            android:visibility="gone" />
+            android:text="@string/forgot_password" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/sign_up"
-            android:visibility="gone" />
+            android:text="@string/sign_up" />
 
         <View
             android:layout_width="match_parent"
