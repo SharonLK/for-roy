@@ -40,8 +40,10 @@ public class MyOrdersActivity extends AppCompatActivity {
         ReservationsAdapter adapter = new ReservationsAdapter(this, R.layout.view_reservation);
         listView.setAdapter(adapter);
 
-        for (Pair<String, Reservation> reservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.username)) {
-            adapter.add(reservation);
+        if (Data.INSTANCE.library != null) {
+            for (Pair<String, Reservation> reservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.username)) {
+                adapter.add(reservation);
+            }
         }
     }
 
