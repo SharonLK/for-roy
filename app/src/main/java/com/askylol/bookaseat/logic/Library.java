@@ -3,6 +3,7 @@ package com.askylol.bookaseat.logic;
 import com.askylol.bookaseat.utils.CalendarUtils;
 import com.askylol.bookaseat.utils.Data;
 import com.askylol.bookaseat.utils.OpeningHours;
+import com.askylol.bookaseat.utils.Pair;
 import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -193,14 +194,16 @@ public class Library {
         return null;
     }
 
-    public List<Reservation> reservationsByUser(String username) {
-        List<Reservation> r = new ArrayList<>();
+    public List<Pair<String, Reservation>> reservationsByUser(String username) {
+        List<Pair<String, Reservation>> r = new ArrayList<>();
 
         for (Map<String, Map<String, Reservation>> stringMapMap : reservations.values()) {
-            for (Map<String, Reservation> stringReservationMap : stringMapMap.values()) {
-                for (Reservation reservation : stringReservationMap.values()) {
+            for (Map.Entry<String, Map<String, Reservation>> stringMapEntry : stringMapMap.entrySet()) {
+                String date = stringMapEntry.getKey();
+
+                for (Reservation reservation : stringMapEntry.getValue().values()) {
                     if (reservation.getUser().equals(username)) {
-                        r.add(reservation);
+                        r.add(new Pair<>(date, reservation));
                     }
                 }
             }

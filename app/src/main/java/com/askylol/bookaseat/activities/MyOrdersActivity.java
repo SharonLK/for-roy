@@ -19,7 +19,9 @@ import android.widget.TextView;
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Reservation;
 import com.askylol.bookaseat.utils.Data;
+import com.askylol.bookaseat.utils.Pair;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 public class MyOrdersActivity extends AppCompatActivity {
@@ -38,7 +40,7 @@ public class MyOrdersActivity extends AppCompatActivity {
         ReservationsAdapter adapter = new ReservationsAdapter(this, R.layout.view_reservation);
         listView.setAdapter(adapter);
 
-        for (Reservation reservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.username)) {
+        for (Pair<String, Reservation> reservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.username)) {
             adapter.add(reservation);
         }
     }
@@ -53,7 +55,7 @@ public class MyOrdersActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class ReservationsAdapter extends ArrayAdapter<Reservation> {
+    private class ReservationsAdapter extends ArrayAdapter<Pair<String, Reservation>> {
         public ReservationsAdapter(@NonNull Context context, @LayoutRes int resource) {
             super(context, resource);
         }
@@ -68,14 +70,21 @@ public class MyOrdersActivity extends AppCompatActivity {
                 v = inflater.inflate(R.layout.view_reservation, null);
             }
 
-            Reservation r = getItem(position);
+            Pair<String, Reservation> dateReservation = getItem(position);
+
+            if (dateReservation == null) {
+                return v;
+            }
+
+            String d = dateReservation.first;
+            Reservation r = dateReservation.second;
 
             if (r != null) {
                 TextView date = (TextView) v.findViewById(R.id.date_textview);
                 TextView time = (TextView) v.findViewById(R.id.from_to_textview);
 
                 if (date != null) {
-                    date.setText("YES");
+                    date.setText(d.replaceAll("_", "/"));
                 }
 
                 if (time != null) {
