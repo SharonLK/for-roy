@@ -1,6 +1,7 @@
 package com.askylol.bookaseat.logic;
 
 import com.askylol.bookaseat.utils.CalendarUtils;
+import com.askylol.bookaseat.utils.Data;
 import com.askylol.bookaseat.utils.OpeningHours;
 import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.firebase.database.DataSnapshot;
@@ -190,6 +191,22 @@ public class Library {
         }
 
         return null;
+    }
+
+    public List<Reservation> reservationsByUser(String username) {
+        List<Reservation> r = new ArrayList<>();
+
+        for (Map<String, Map<String, Reservation>> stringMapMap : reservations.values()) {
+            for (Map<String, Reservation> stringReservationMap : stringMapMap.values()) {
+                for (Reservation reservation : stringReservationMap.values()) {
+                    if (reservation.getUser().equals(username)) {
+                        r.add(reservation);
+                    }
+                }
+            }
+        }
+
+        return r;
     }
 
     public boolean reservationByUser(Calendar selectedDateTime, String username) {
