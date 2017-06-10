@@ -27,4 +27,6 @@
     <string name="yes">כן</string>
     <string name="cant_reserve_past">לא ניתן לשמור מקום לזמן שעבר</string>
     <string name="closed">סגור</string>
+    <string name="sign_up_form">טופס הרשמה</string>
+    <string name="sign_up_button">רישום!</string>
 </resources>

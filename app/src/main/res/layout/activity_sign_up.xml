@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="30dp"
-            android:text="@string/welcome"
+            android:text="@string/sign_up_form"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -37,19 +37,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/e_mail_address"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"/>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password" />
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/keep_me_logged_in" />
 
         <Button
             android:id="@+id/button"
@@ -57,21 +50,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:onClick="loginClick"
-            android:text="@string/log_in"
+            android:text="@string/sign_up_button"
             android:textAllCaps="false" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="6dp"
-            android:text="@string/forgot_password" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/sign_up" />
 
         <View
             android:layout_width="match_parent"

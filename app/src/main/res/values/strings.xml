@@ -26,4 +26,6 @@
     <string name="yes">yes</string>
     <string name="cant_reserve_past">Can not reserve a seat for past time</string>
     <string name="closed">Closed</string>
+    <string name="sign_up_form">Sign Up Form</string>
+    <string name="sign_up_button">Sign Up!</string>
 </resources>
