@@ -161,8 +161,8 @@ public class MainActivity extends AppCompatActivity {
                             for (OpeningHours.Day day : OpeningHours.Day.values()) {
                                 Pair<TimeOfDay, TimeOfDay> hPair = ws.get(day.toString());
                                 ArrayList<Integer> tmp;
-                                if (hPair != null) {
-                                   tmp = new ArrayList<>();
+                                if (hPair != null && hPair.first != null && hPair.second != null) {
+                                    tmp = new ArrayList<>();
                                     tmp.add(hPair.first.hour);
                                     tmp.add(hPair.first.minute);
                                     tmp.add(hPair.second.hour);
@@ -288,6 +288,10 @@ public class MainActivity extends AppCompatActivity {
                         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
                         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
+                        if (reserveButton == null || cancelButton == null) {
+                            return;
+                        }
+
                         reserveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -378,8 +382,15 @@ public class MainActivity extends AppCompatActivity {
                 timePickerDialog.setButton(TimePickerDialog.BUTTON_POSITIVE, getString(R.string.set), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        timeOfDay.hour = ((NumberPicker) timePickerDialog.findViewById(R.id.hours)).getValue();
-                        timeOfDay.minute = ((NumberPicker) timePickerDialog.findViewById(R.id.minutes)).getValue() * 15;
+                        NumberPicker hoursPicker = (NumberPicker) timePickerDialog.findViewById(R.id.hours);
+                        NumberPicker minutesPicker = (NumberPicker) timePickerDialog.findViewById(R.id.minutes);
+
+                        if (hoursPicker == null || minutesPicker == null) {
+                            return;
+                        }
+
+                        timeOfDay.hour = hoursPicker.getValue();
+                        timeOfDay.minute = minutesPicker.getValue() * 15;
                         button.setText(CalendarUtils.getTimeString(timeOfDay));
 
                         recalculateInfoLabel(alertDialog);
@@ -390,6 +401,10 @@ public class MainActivity extends AppCompatActivity {
 
                 NumberPicker minutesPicker = (NumberPicker) timePickerDialog.findViewById(R.id.minutes);
                 NumberPicker hoursPicker = (NumberPicker) timePickerDialog.findViewById(R.id.hours);
+
+                if (minutesPicker == null || hoursPicker == null) {
+                    return;
+                }
 
                 int quarter = (int) Math.ceil(timeOfDay.minute / 15.0);
                 minutesPicker.setMinValue(0);
@@ -412,8 +427,16 @@ public class MainActivity extends AppCompatActivity {
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
 
-        String startTime[] = ((Button) dialog.findViewById(R.id.startTimeButton)).getText().toString().split(":");
-        String endTime[] = ((Button) dialog.findViewById(R.id.endTimeButton)).getText().toString().split(":");
+        Button startTimeButton = (Button) dialog.findViewById(R.id.startTimeButton);
+        Button endTimeButton = (Button) dialog.findViewById(R.id.endTimeButton);
+
+        if (label == null || cancelButton == null || reserveButton == null ||
+                startTimeButton == null || endTimeButton == null) {
+            return;
+        }
+
+        String startTime[] = startTimeButton.getText().toString().split(":");
+        String endTime[] = endTimeButton.getText().toString().split(":");
 
         long startMins = Integer.parseInt(startTime[0]) * 60 + Integer.parseInt(startTime[1]);
         long endMins = Integer.parseInt(endTime[0]) * 60 + Integer.parseInt(endTime[1]);
@@ -437,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
             label.setText(R.string.seat_already_reserved);
             label.setTextColor(Color.RED);
             reserveButton.setEnabled(false);
-        } else if (startCalendar.getTimeInMillis() < Calendar.getInstance().getTimeInMillis() - 1000*60){
+        } else if (startCalendar.getTimeInMillis() < Calendar.getInstance().getTimeInMillis() - 1000 * 60) {
             label.setText(R.string.cant_reserve_past);
             label.setTextColor(Color.RED);
             reserveButton.setEnabled(false);
