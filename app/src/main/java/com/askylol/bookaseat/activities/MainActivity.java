@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
             final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedDateTime, Data.INSTANCE.username);
 
             if (reservation != null) {
-                logo.setImageResource(R.drawable.chair_icon_reserved);
+                logo.setImageResource(R.drawable.chair_icon_occupied_current);
 
                 hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
                     @Override
