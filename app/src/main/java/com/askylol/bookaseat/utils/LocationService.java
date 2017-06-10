@@ -19,11 +19,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 
-public class LocationService extends BroadcastReceiver {
+public class LocationService {
 
     private static final String baseUrl = "http://blabla.com"; //TODO
 
-    static public JSONObject track(String username, JSONArray wifiFingerprints) throws IOException, JSONException {
+    static public JSONObject track(Context context, String username) throws IOException, JSONException {
         try {
             HttpURLConnection connection = (HttpURLConnection)(new URL(baseUrl + "/track")).openConnection();
             connection.setDoOutput(true);
@@ -32,7 +32,7 @@ public class LocationService extends BroadcastReceiver {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestProperty("charset", "utf-8");
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-            wr.write(getJsonForTrack(username, wifiFingerprints).toString());
+            wr.write(getJsonForTrack(username, getWifiFingerprints(context)).toString());
             wr.flush();
             wr.close();
 
@@ -66,8 +66,7 @@ public class LocationService extends BroadcastReceiver {
         return jsonParam;
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
+    private static JSONArray getWifiFingerprints(Context context) {
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         JSONArray jsonArray = new JSONArray();
         for (ScanResult result : wifiManager.getScanResults()) {
@@ -80,6 +79,6 @@ public class LocationService extends BroadcastReceiver {
                 e.printStackTrace();
             }
         }
-        //TODO: add result to application context
+        return jsonArray;
     }
 }
