@@ -361,6 +361,11 @@ public class MainActivity extends AppCompatActivity {
         timeOfDay.minute = (int) Math.ceil(timeOfDay.minute / 15.0) * 15;
         timeOfDay.hour = timeOfDay.hour + (timeOfDay.minute > 45 ? 1 : 0);
 
+        // Make sure we don't have time like 14:60, but instead 14:00
+        if (timeOfDay.minute >= 60) {
+            timeOfDay.minute = 0;
+        }
+
         button.setText(CalendarUtils.getTimeString(timeOfDay));
         button.setOnClickListener(new View.OnClickListener() {
             @Override
