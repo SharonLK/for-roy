@@ -1,27 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/group1" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_library"
             android:icon="@drawable/ic_import_contacts_black_24dp"
             android:title="@string/nav_library" />
+    </group>
 
+    <group android:id="@+id/group2" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_orders"
             android:icon="@drawable/ic_content_paste_black_24dp"
             android:title="@string/nav_orders" />
+    </group>
 
+    <group android:id="@+id/group3" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_opening"
             android:icon="@drawable/ic_schedule_black_24dp"
             android:title="@string/nav_opening" />
+    </group>
 
+    <group android:id="@+id/group4" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/nav_settings" />
+    </group>
 
+    <group android:id="@+id/group5" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_about_us"
             android:icon="@drawable/ic_info_black_24dp"
