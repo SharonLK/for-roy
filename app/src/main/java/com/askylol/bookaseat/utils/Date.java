@@ -75,4 +75,13 @@ public class Date {
         result = 31 * result + year;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Date{" +
+                "day=" + day +
+                ", month=" + month +
+                ", year=" + year +
+                '}';
+    }
 }

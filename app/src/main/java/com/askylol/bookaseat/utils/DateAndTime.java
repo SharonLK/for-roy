@@ -42,4 +42,12 @@ public class DateAndTime {
         result = 31 * result + (time != null ? time.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "DateAndTime{" +
+                "date=" + date +
+                ", time=" + time +
+                '}';
+    }
 }

@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Reservation;
 import com.askylol.bookaseat.utils.Data;
+import com.askylol.bookaseat.utils.Date;
+import com.askylol.bookaseat.utils.DateAndTime;
 import com.askylol.bookaseat.utils.Pair;
 import com.askylol.bookaseat.utils.TimeOfDay;
 
@@ -41,18 +43,30 @@ public class MyOrdersActivity extends AppCompatActivity {
         ReservationsAdapter reservationsAdapter = new ReservationsAdapter(this, R.layout.view_reservation);
         reservationsListView.setAdapter(reservationsAdapter);
 
-        if (Data.INSTANCE.library != null) {
-            for (Pair<String, Reservation> reservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.username)) {
-                reservationsAdapter.add(reservation);
-            }
-        }
-
         ListView historyListView = (ListView) findViewById(R.id.history_list);
         ReservationsAdapter historyAdapter = new ReservationsAdapter(this, R.layout.view_reservation);
         historyListView.setAdapter(historyAdapter);
 
-        historyAdapter.add(new Pair<>("5/5/5",
-                new Reservation(new TimeOfDay(10, 10), new TimeOfDay(12, 12), "ylev")));
+        Calendar c = Calendar.getInstance();
+        DateAndTime dateAndTime = new DateAndTime(
+                new Date(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)),
+                new TimeOfDay(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)));
+
+        if (Data.INSTANCE.library != null) {
+            for (Pair<String, Reservation> dateReservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.username)) {
+                String date = dateReservation.first;
+                Reservation reservation = dateReservation.second;
+
+                System.out.println(dateAndTime);
+                System.out.println(new DateAndTime(new Date(date, "_"), reservation.getEnd()));
+
+                if (dateAndTime.after(new DateAndTime(new Date(date, "_"), reservation.getEnd()))) {
+                    historyAdapter.add(dateReservation);
+                } else {
+                    reservationsAdapter.add(dateReservation);
+                }
+            }
+        }
     }
 
     @Override
