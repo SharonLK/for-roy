@@ -20,6 +20,7 @@ import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.logic.Reservation;
 import com.askylol.bookaseat.utils.Data;
 import com.askylol.bookaseat.utils.Pair;
+import com.askylol.bookaseat.utils.TimeOfDay;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -36,15 +37,22 @@ public class MyOrdersActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.nav_orders);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ListView listView = (ListView) findViewById(R.id.reservations_list);
-        ReservationsAdapter adapter = new ReservationsAdapter(this, R.layout.view_reservation);
-        listView.setAdapter(adapter);
+        ListView reservationsListView = (ListView) findViewById(R.id.reservations_list);
+        ReservationsAdapter reservationsAdapter = new ReservationsAdapter(this, R.layout.view_reservation);
+        reservationsListView.setAdapter(reservationsAdapter);
 
         if (Data.INSTANCE.library != null) {
             for (Pair<String, Reservation> reservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.username)) {
-                adapter.add(reservation);
+                reservationsAdapter.add(reservation);
             }
         }
+
+        ListView historyListView = (ListView) findViewById(R.id.history_list);
+        ReservationsAdapter historyAdapter = new ReservationsAdapter(this, R.layout.view_reservation);
+        historyListView.setAdapter(historyAdapter);
+
+        historyAdapter.add(new Pair<>("5/5/5",
+                new Reservation(new TimeOfDay(10, 10), new TimeOfDay(12, 12), "ylev")));
     }
 
     @Override
@@ -55,6 +63,15 @@ public class MyOrdersActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onHistoryButtonClicked(View view) {
+        ListView history = (ListView) findViewById(R.id.history_list);
+        if (history.getVisibility() == View.GONE) {
+            history.setVisibility(View.VISIBLE);
+        } else {
+            history.setVisibility(View.GONE);
+        }
     }
 
     private class ReservationsAdapter extends ArrayAdapter<Pair<String, Reservation>> {
