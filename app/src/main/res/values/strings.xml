@@ -26,6 +26,14 @@
     <string name="yes">yes</string>
     <string name="cant_reserve_past">Can not reserve a seat for past time</string>
     <string name="closed">Closed</string>
+    <string name="sofa_credit">The sofa icon in our logo was made by</string>
+    <string name="from">from</string>
+    <string name="credits">Credits</string>
+    <string name="about_paragraph">We are students of at the Technion, Israel Institute of Technology, studying software engineering. Book a Seat is the final project in an Android course we are taking. The application\'s main goal is to combat situations where students leave their seat occupied by bags or notebooks for hours while attending a lecture or having lunch, disallowing others to have this seat.</string>
+    <string name="who_are_we">Who Are We?</string>
+    <string name="about_book_a_seat">About Book a Seat</string>
+    <string name="and">and</string>
+    <string name="welcome_github">You are welcome to check out our GitHub profiles</string>
     <string name="sign_up_form">Sign Up Form</string>
     <string name="sign_up_button">Sign Up!</string>
 </resources>

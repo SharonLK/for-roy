@@ -27,6 +27,14 @@
     <string name="yes">כן</string>
     <string name="cant_reserve_past">לא ניתן לשמור מקום לזמן שעבר</string>
     <string name="closed">סגור</string>
+    <string name="sofa_credit">אייקון הספה שמופיע בלוגו שלנו נוצר על ידי</string>
+    <string name="from">מ-</string>
+    <string name="credits">תודות</string>
+    <string name="about_paragraph">אנו סטודנטים להנדסת תוכנה בטכניון, המוסד הטכנולוגי לישראל. Book a Seat הוא פרויקט הגמר שלנו בקורס בתכנות באנדרואיד שאנו לוקחים. מטרת האפליקציה היא למנוע מצב שבו סטודנטים שומרים מקום בעזרת תיקים או מחברות למשך שעות בזמן שהם נמצאים בהרצאה או אוכלים צהריים, ומונעים מסטודנטים אחרים לשבת במקום זה באותו הזמן.</string>
+    <string name="who_are_we">מי אנחנו?</string>
+    <string name="about_book_a_seat">אודות Book a Seat</string>
+    <string name="and">ו-</string>
+    <string name="welcome_github">אתם מוזמנים להסתכל בפרופילים שלנו בגיטהאב</string>
     <string name="sign_up_form">טופס הרשמה</string>
     <string name="sign_up_button">רישום!</string>
 </resources>
