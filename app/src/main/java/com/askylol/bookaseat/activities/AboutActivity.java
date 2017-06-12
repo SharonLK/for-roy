@@ -15,7 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AboutActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,38 +49,8 @@ public class AboutActivity extends AppCompatActivity {
         Pattern mPattern = Pattern.compile("Freepik");
         Pattern mPattern2 = Pattern.compile("www.flaticon.com");
         String scheme = "http://";
-        String scheme2 = "https://";
         Linkify.addLinks(textView, mPattern, scheme, mMatchFilter, mTransformFilter);
         Linkify.addLinks(textView, mPattern2, scheme, mMatchFilter, mTransformFilter2);
-
-        TextView textView2 = (TextView)findViewById(R.id.github_users);
-        String s2 = String.format(Locale.US, "%s: %s, %s, %s %s", getString(R.string.welcome_github), "@SharonKL", "@AmitOhayon", getString(R.string.and), "@ylevv");
-        textView2.setText(s2);
-        Linkify.TransformFilter mTransformFilter3 = new Linkify.TransformFilter() {
-            public final String transformUrl(final Matcher match, String url) {
-                return "github.com/SharonKL";
-            }
-        };
-
-        Linkify.TransformFilter mTransformFilter4 = new Linkify.TransformFilter() {
-            public final String transformUrl(final Matcher match, String url) {
-                return "github.com/AmitOhayon";
-            }
-        };
-
-        Linkify.TransformFilter mTransformFilter5 = new Linkify.TransformFilter() {
-            public final String transformUrl(final Matcher match, String url) {
-                return "github.com/ylevv";
-            }
-        };
-
-        Pattern mPattern3 = Pattern.compile("@SharonKL");
-        Pattern mPattern4 = Pattern.compile("@AmitOhayon");
-        Pattern mPattern5 = Pattern.compile("@ylevv");
-        Linkify.addLinks(textView2, mPattern3, scheme2, mMatchFilter, mTransformFilter3);
-        Linkify.addLinks(textView2, mPattern4, scheme2, mMatchFilter, mTransformFilter4);
-        Linkify.addLinks(textView2, mPattern5, scheme2, mMatchFilter, mTransformFilter5);
-
     }
 
     @Override
