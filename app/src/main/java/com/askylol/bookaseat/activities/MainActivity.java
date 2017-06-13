@@ -1,14 +1,21 @@
 package com.askylol.bookaseat.activities;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -33,6 +40,7 @@ import com.askylol.bookaseat.logic.Seat;
 import com.askylol.bookaseat.logic.User;
 import com.askylol.bookaseat.utils.CalendarUtils;
 import com.askylol.bookaseat.utils.Data;
+import com.askylol.bookaseat.utils.LocationService;
 import com.askylol.bookaseat.utils.OpeningHours;
 import com.askylol.bookaseat.utils.Pair;
 import com.askylol.bookaseat.utils.Point;
@@ -49,16 +57,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String SELECTED_DATE_TIME_KEY = "selectedDateTimeKey";
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 2247;
     private ActionBarDrawerToggle mDrawerToggle;
     private TileView tileView;
 
     private List<View> views = new ArrayList<>();
 
     private Calendar selectedDateTime = Calendar.getInstance();
+    private Timer trackTimer = new Timer();
 
     ValueEventListener libraryChangedListener = new ValueEventListener() {
         @Override
@@ -179,6 +191,21 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             });
+        }
+
+        registerReceiver(new LocationService(), new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
+
+        //TODO: do we need to check for other permissions?
+        if (ContextCompat.checkSelfPermission(
+                MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    PERMISSION_REQUEST_COARSE_LOCATION);
+        } else {
+            setupTimer();
         }
     }
 
@@ -469,5 +496,32 @@ public class MainActivity extends AppCompatActivity {
             label.setTextColor(Color.BLACK);
             reserveButton.setEnabled(true);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST_COARSE_LOCATION) {
+            if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.locationing_disabled_title)
+                        .setMessage(R.string.locationing_disabled_message)
+                        .setNeutralButton(R.string.ok, null)
+                        .create();
+
+                dialog.show();
+            } else {
+                setupTimer();
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void setupTimer() {
+        trackTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
+            }
+        }, 0, 30000);
     }
 }

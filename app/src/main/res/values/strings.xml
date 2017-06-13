@@ -38,4 +38,6 @@
     <string name="sign_up_button">Sign Up!</string>
     <string name="contact_us">Contact Us</string>
     <string name="mail_address">support@bookaseat.com</string>
+    <string name="locationing_disabled_title">Locationing is Disabled</string>
+    <string name="locationing_disabled_message">You will not be able to occupy reserved seats while locationing is disabled.</string>
 </resources>

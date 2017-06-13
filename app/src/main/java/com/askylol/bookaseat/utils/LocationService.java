@@ -1,10 +1,16 @@
 package com.askylol.bookaseat.utils;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,9 +25,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 
-public class LocationService {
+public class LocationService extends BroadcastReceiver {
 
-    private static final String baseUrl = "http://blabla.com"; //TODO
+    private static final String baseUrl = "http://localhost"; //TODO
 
     static public JSONObject track(Context context, String username) throws IOException, JSONException {
         try {
@@ -72,7 +78,7 @@ public class LocationService {
         for (ScanResult result : wifiManager.getScanResults()) {
             try {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("mac", "bla");
+                jsonObject.put("mac", result.BSSID);
                 jsonObject.put("rssi", result.level);
                 jsonArray.put(jsonObject);
             } catch (JSONException e) {
@@ -80,5 +86,20 @@ public class LocationService {
             }
         }
         return jsonArray;
+    }
+
+    @Override
+    public void onReceive(final Context context, Intent intent) {
+        new AsyncTask<String, Void, JSONObject>() {
+            @Override
+            protected JSONObject doInBackground(String... params) {
+                try {
+                    return LocationService.track(context, Data.INSTANCE.username);
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute(Data.INSTANCE.username);
     }
 }

@@ -28,18 +28,5 @@ public class LoginActivity extends AppCompatActivity {
         Data.INSTANCE.username = username.getText().toString();
         startActivity(new Intent(this, MainActivity.class));
         finish();
-//        new AsyncTask<String, Void, JSONObject>() {
-//            @Override
-//            protected JSONObject doInBackground(String... params) {
-//                try {
-//                    return LocationService.track(LoginActivity.this, Data.INSTANCE.username);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//                return null;
-//            }
-//        }.execute(Data.INSTANCE.username);
     }
 }

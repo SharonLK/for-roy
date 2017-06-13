@@ -39,4 +39,7 @@
     <string name="sign_up_button">רישום!</string>
     <string name="contact_us">צרו קשר</string>
     <string name="mail_address">support@bookaseat.com</string>
+    <string name="locationing_disabled_title">מיקום כבוי</string>
+    <string name="locationing_disabled_message">לא ניתן לתפוס מקומות שמורים כאשר המיקום כבוי.</string>
+
 </resources>
