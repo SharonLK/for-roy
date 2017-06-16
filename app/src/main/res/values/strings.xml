@@ -40,4 +40,6 @@
     <string name="mail_address">support@bookaseat.com</string>
     <string name="locationing_disabled_title">Locationing is Disabled</string>
     <string name="locationing_disabled_message">You will not be able to occupy reserved seats while locationing is disabled.</string>
+    <string name="update">Update</string>
+    <string name="revert">Revert</string>
 </resources>
