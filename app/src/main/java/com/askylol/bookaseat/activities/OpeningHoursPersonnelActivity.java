@@ -35,7 +35,29 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.nav_opening);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Map<OpeningHours.Day, CheckBox> dayCheckBoxMap = new HashMap<OpeningHours.Day, CheckBox>() {{
+        setActivityFromOpeningHours(Data.INSTANCE.library.getOpeningHours());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void updateButtonOnClick(View view) {
+        Data.INSTANCE.library.setOpeningHours(openingHoursFromActivity());
+    }
+
+    public void revertButtonOnClick(View view) {
+        setActivityFromOpeningHours(Data.INSTANCE.library.getOpeningHours());
+    }
+
+    private Map<OpeningHours.Day, CheckBox> getDayCheckBoxMap() {
+        return new HashMap<OpeningHours.Day, CheckBox>() {{
             put(OpeningHours.Day.SUNDAY, (CheckBox) findViewById(R.id.sunday_check_box));
             put(OpeningHours.Day.MONDAY, (CheckBox) findViewById(R.id.monday_check_box));
             put(OpeningHours.Day.TUESDAY, (CheckBox) findViewById(R.id.tuesday_check_box));
@@ -44,8 +66,10 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
             put(OpeningHours.Day.FRIDAY, (CheckBox) findViewById(R.id.friday_check_box));
             put(OpeningHours.Day.SATURDAY, (CheckBox) findViewById(R.id.saturday_check_box));
         }};
+    }
 
-        Map<OpeningHours.Day, EditText> dayStartTimeHoursMap = new HashMap<OpeningHours.Day, EditText>() {{
+    private Map<OpeningHours.Day, EditText> getDayStartTimeHoursMap() {
+        return new HashMap<OpeningHours.Day, EditText>() {{
             put(OpeningHours.Day.SUNDAY, (EditText) findViewById(R.id.sunday_start_time_hours_edit_text));
             put(OpeningHours.Day.MONDAY, (EditText) findViewById(R.id.monday_start_time_hours_edit_text));
             put(OpeningHours.Day.TUESDAY, (EditText) findViewById(R.id.tuesday_start_time_hours_edit_text));
@@ -54,8 +78,10 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
             put(OpeningHours.Day.FRIDAY, (EditText) findViewById(R.id.friday_start_time_hours_edit_text));
             put(OpeningHours.Day.SATURDAY, (EditText) findViewById(R.id.saturday_start_time_hours_edit_text));
         }};
+    }
 
-        Map<OpeningHours.Day, EditText> dayStartTimeMinutesMap = new HashMap<OpeningHours.Day, EditText>() {{
+    private Map<OpeningHours.Day, EditText> getDayStartTimeMinutesMap() {
+        return new HashMap<OpeningHours.Day, EditText>() {{
             put(OpeningHours.Day.SUNDAY, (EditText) findViewById(R.id.sunday_start_time_minutes_edit_text));
             put(OpeningHours.Day.MONDAY, (EditText) findViewById(R.id.monday_start_time_minutes_edit_text));
             put(OpeningHours.Day.TUESDAY, (EditText) findViewById(R.id.tuesday_start_time_minutes_edit_text));
@@ -64,8 +90,10 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
             put(OpeningHours.Day.FRIDAY, (EditText) findViewById(R.id.friday_start_time_minutes_edit_text));
             put(OpeningHours.Day.SATURDAY, (EditText) findViewById(R.id.saturday_start_time_minutes_edit_text));
         }};
+    }
 
-        Map<OpeningHours.Day, EditText> dayEndTimeHoursMap = new HashMap<OpeningHours.Day, EditText>() {{
+    private Map<OpeningHours.Day, EditText> getDayEndTimeHoursMap() {
+        return new HashMap<OpeningHours.Day, EditText>() {{
             put(OpeningHours.Day.SUNDAY, (EditText) findViewById(R.id.sunday_end_time_hours_edit_text));
             put(OpeningHours.Day.MONDAY, (EditText) findViewById(R.id.monday_end_time_hours_edit_text));
             put(OpeningHours.Day.TUESDAY, (EditText) findViewById(R.id.tuesday_end_time_hours_edit_text));
@@ -74,8 +102,10 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
             put(OpeningHours.Day.FRIDAY, (EditText) findViewById(R.id.friday_end_time_hours_edit_text));
             put(OpeningHours.Day.SATURDAY, (EditText) findViewById(R.id.saturday_end_time_hours_edit_text));
         }};
+    }
 
-        Map<OpeningHours.Day, EditText> dayEndTimeMinutesMap = new HashMap<OpeningHours.Day, EditText>() {{
+    private Map<OpeningHours.Day, EditText> getDayEndTimeMinutesMap() {
+        return new HashMap<OpeningHours.Day, EditText>() {{
             put(OpeningHours.Day.SUNDAY, (EditText) findViewById(R.id.sunday_end_time_minutes_edit_text));
             put(OpeningHours.Day.MONDAY, (EditText) findViewById(R.id.monday_end_time_minutes_edit_text));
             put(OpeningHours.Day.TUESDAY, (EditText) findViewById(R.id.tuesday_end_time_minutes_edit_text));
@@ -84,8 +114,14 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
             put(OpeningHours.Day.FRIDAY, (EditText) findViewById(R.id.friday_end_time_minutes_edit_text));
             put(OpeningHours.Day.SATURDAY, (EditText) findViewById(R.id.saturday_end_time_minutes_edit_text));
         }};
+    }
 
-        OpeningHours openingHours = Data.INSTANCE.library.getOpeningHours();
+    private void setActivityFromOpeningHours(OpeningHours openingHours) {
+        Map<OpeningHours.Day, CheckBox> dayCheckBoxMap = getDayCheckBoxMap();
+        Map<OpeningHours.Day, EditText> dayStartTimeHoursMap = getDayStartTimeHoursMap();
+        Map<OpeningHours.Day, EditText> dayStartTimeMinutesMap = getDayStartTimeMinutesMap();
+        Map<OpeningHours.Day, EditText> dayEndTimeHoursMap = getDayEndTimeHoursMap();
+        Map<OpeningHours.Day, EditText> dayEndTimeMinutesMap = getDayEndTimeMinutesMap();
 
         if (openingHours != null) {
             for (final OpeningHours.Day day : OpeningHours.Day.values()) {
@@ -128,21 +164,32 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
+    private OpeningHours openingHoursFromActivity() {
+        OpeningHours openingHours = new OpeningHours();
+
+        Map<OpeningHours.Day, CheckBox> dayCheckBoxMap = getDayCheckBoxMap();
+        Map<OpeningHours.Day, EditText> dayStartTimeHoursMap = getDayStartTimeHoursMap();
+        Map<OpeningHours.Day, EditText> dayStartTimeMinutesMap = getDayStartTimeMinutesMap();
+        Map<OpeningHours.Day, EditText> dayEndTimeHoursMap = getDayEndTimeHoursMap();
+        Map<OpeningHours.Day, EditText> dayEndTimeMinutesMap = getDayEndTimeMinutesMap();
+
+        for (OpeningHours.Day day : OpeningHours.Day.values()) {
+            CheckBox checkBox = dayCheckBoxMap.get(day);
+            EditText startTimeHourEditText = dayStartTimeHoursMap.get(day);
+            EditText startTimeMinuteEditText = dayStartTimeMinutesMap.get(day);
+            EditText endTimeHourEditText = dayEndTimeHoursMap.get(day);
+            EditText endTimeMinuteEditText = dayEndTimeMinutesMap.get(day);
+
+            if (checkBox.isChecked()) {
+                TimeOfDay start = new TimeOfDay(Integer.parseInt(startTimeHourEditText.getText().toString()),
+                        Integer.parseInt(startTimeMinuteEditText.getText().toString()));
+                TimeOfDay end = new TimeOfDay(Integer.parseInt(endTimeHourEditText.getText().toString()),
+                        Integer.parseInt(endTimeMinuteEditText.getText().toString()));
+
+                openingHours.setOpeningHours(day, start, end);
+            }
         }
-        return super.onOptionsItemSelected(item);
-    }
 
-    public void updateButtonOnClick(View view) {
-
-    }
-
-    public void revertButtonOnClick(View view) {
-
+        return openingHours;
     }
 }
