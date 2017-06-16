@@ -1,21 +1,24 @@
 package com.askylol.bookaseat.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.askylol.bookaseat.R;
+import com.askylol.bookaseat.utils.Data;
 import com.askylol.bookaseat.utils.OpeningHours;
+import com.askylol.bookaseat.utils.Pair;
+import com.askylol.bookaseat.utils.TimeOfDay;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by Sharon on 16-Jun-17.
@@ -25,35 +28,103 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_opening_hours);
+        setContentView(R.layout.activity_opening_hours_personnel);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.nav_opening);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        LinearLayout openings = (LinearLayout) findViewById(R.id.opening_layout);
-        LinearLayout days = (LinearLayout) findViewById(R.id.days);
+        Map<OpeningHours.Day, CheckBox> dayCheckBoxMap = new HashMap<OpeningHours.Day, CheckBox>() {{
+            put(OpeningHours.Day.SUNDAY, (CheckBox) findViewById(R.id.sunday_check_box));
+            put(OpeningHours.Day.MONDAY, (CheckBox) findViewById(R.id.monday_check_box));
+            put(OpeningHours.Day.TUESDAY, (CheckBox) findViewById(R.id.tuesday_check_box));
+            put(OpeningHours.Day.WEDNESDAY, (CheckBox) findViewById(R.id.wednesday_check_box));
+            put(OpeningHours.Day.THURSDAY, (CheckBox) findViewById(R.id.thursday_check_box));
+            put(OpeningHours.Day.FRIDAY, (CheckBox) findViewById(R.id.friday_check_box));
+            put(OpeningHours.Day.SATURDAY, (CheckBox) findViewById(R.id.saturday_check_box));
+        }};
 
-        for (OpeningHours.Day day : OpeningHours.Day.values()) {
-            ArrayList<Integer> tmp = intent.getIntegerArrayListExtra(day.toString());
-            EditText textView = new EditText(OpeningHoursPersonnelActivity.this);
-            EditText dayTextView = new EditText(OpeningHoursPersonnelActivity.this);
-            String s = String.format(Locale.US, "%s:", day.toString());
-            dayTextView.setText(s);
-            dayTextView.setTextSize(16);
-            dayTextView.setPadding(15, 15, 15, 15);
-            days.addView(dayTextView);
-            if (tmp != null) {
-                s = String.format(Locale.US, "%02d:%02d - %02d:%02d", tmp.get(0), tmp.get(1), tmp.get(2), tmp.get(3));
-            } else {
-                s = String.format(Locale.US, "%s", getString(R.string.closed));
+        Map<OpeningHours.Day, EditText> dayStartTimeHoursMap = new HashMap<OpeningHours.Day, EditText>() {{
+            put(OpeningHours.Day.SUNDAY, (EditText) findViewById(R.id.sunday_start_time_hours_edit_text));
+            put(OpeningHours.Day.MONDAY, (EditText) findViewById(R.id.monday_start_time_hours_edit_text));
+            put(OpeningHours.Day.TUESDAY, (EditText) findViewById(R.id.tuesday_start_time_hours_edit_text));
+            put(OpeningHours.Day.WEDNESDAY, (EditText) findViewById(R.id.wednesday_start_time_hours_edit_text));
+            put(OpeningHours.Day.THURSDAY, (EditText) findViewById(R.id.thursday_start_time_hours_edit_text));
+            put(OpeningHours.Day.FRIDAY, (EditText) findViewById(R.id.friday_start_time_hours_edit_text));
+            put(OpeningHours.Day.SATURDAY, (EditText) findViewById(R.id.saturday_start_time_hours_edit_text));
+        }};
+
+        Map<OpeningHours.Day, EditText> dayStartTimeMinutesMap = new HashMap<OpeningHours.Day, EditText>() {{
+            put(OpeningHours.Day.SUNDAY, (EditText) findViewById(R.id.sunday_start_time_minutes_edit_text));
+            put(OpeningHours.Day.MONDAY, (EditText) findViewById(R.id.monday_start_time_minutes_edit_text));
+            put(OpeningHours.Day.TUESDAY, (EditText) findViewById(R.id.tuesday_start_time_minutes_edit_text));
+            put(OpeningHours.Day.WEDNESDAY, (EditText) findViewById(R.id.wednesday_start_time_minutes_edit_text));
+            put(OpeningHours.Day.THURSDAY, (EditText) findViewById(R.id.thursday_start_time_minutes_edit_text));
+            put(OpeningHours.Day.FRIDAY, (EditText) findViewById(R.id.friday_start_time_minutes_edit_text));
+            put(OpeningHours.Day.SATURDAY, (EditText) findViewById(R.id.saturday_start_time_minutes_edit_text));
+        }};
+
+        Map<OpeningHours.Day, EditText> dayEndTimeHoursMap = new HashMap<OpeningHours.Day, EditText>() {{
+            put(OpeningHours.Day.SUNDAY, (EditText) findViewById(R.id.sunday_end_time_hours_edit_text));
+            put(OpeningHours.Day.MONDAY, (EditText) findViewById(R.id.monday_end_time_hours_edit_text));
+            put(OpeningHours.Day.TUESDAY, (EditText) findViewById(R.id.tuesday_end_time_hours_edit_text));
+            put(OpeningHours.Day.WEDNESDAY, (EditText) findViewById(R.id.wednesday_end_time_hours_edit_text));
+            put(OpeningHours.Day.THURSDAY, (EditText) findViewById(R.id.thursday_end_time_hours_edit_text));
+            put(OpeningHours.Day.FRIDAY, (EditText) findViewById(R.id.friday_end_time_hours_edit_text));
+            put(OpeningHours.Day.SATURDAY, (EditText) findViewById(R.id.saturday_end_time_hours_edit_text));
+        }};
+
+        Map<OpeningHours.Day, EditText> dayEndTimeMinutesMap = new HashMap<OpeningHours.Day, EditText>() {{
+            put(OpeningHours.Day.SUNDAY, (EditText) findViewById(R.id.sunday_end_time_minutes_edit_text));
+            put(OpeningHours.Day.MONDAY, (EditText) findViewById(R.id.monday_end_time_minutes_edit_text));
+            put(OpeningHours.Day.TUESDAY, (EditText) findViewById(R.id.tuesday_end_time_minutes_edit_text));
+            put(OpeningHours.Day.WEDNESDAY, (EditText) findViewById(R.id.wednesday_end_time_minutes_edit_text));
+            put(OpeningHours.Day.THURSDAY, (EditText) findViewById(R.id.thursday_end_time_minutes_edit_text));
+            put(OpeningHours.Day.FRIDAY, (EditText) findViewById(R.id.friday_end_time_minutes_edit_text));
+            put(OpeningHours.Day.SATURDAY, (EditText) findViewById(R.id.saturday_end_time_minutes_edit_text));
+        }};
+
+        OpeningHours openingHours = Data.INSTANCE.library.getOpeningHours();
+
+        if (openingHours != null) {
+            for (final OpeningHours.Day day : OpeningHours.Day.values()) {
+                final CheckBox checkBox = dayCheckBoxMap.get(day);
+                final EditText startHoursEditText = dayStartTimeHoursMap.get(day);
+                final EditText startMinutesEditText = dayStartTimeMinutesMap.get(day);
+                final EditText endHoursEditText = dayEndTimeHoursMap.get(day);
+                final EditText endMinutesEditText = dayEndTimeMinutesMap.get(day);
+
+                Pair<TimeOfDay, TimeOfDay> time = openingHours.getOpeningHours(day);
+
+                checkBox.setChecked(time != null);
+                startHoursEditText.setEnabled(time != null);
+                startMinutesEditText.setEnabled(time != null);
+                endHoursEditText.setEnabled(time != null);
+                endMinutesEditText.setEnabled(time != null);
+
+                if (time != null && time.first != null && time.second != null) {
+                    startHoursEditText.setText(String.format(Locale.US, "%02d", time.first.hour));
+                    startMinutesEditText.setText(String.format(Locale.US, "%02d", time.first.minute));
+                    endHoursEditText.setText(String.format(Locale.US, "%02d", time.second.hour));
+                    endMinutesEditText.setText(String.format(Locale.US, "%02d", time.second.minute));
+                } else {
+                    startHoursEditText.setText(R.string.zero_formatted_2d);
+                    startMinutesEditText.setText(R.string.zero_formatted_2d);
+                    endHoursEditText.setText(R.string.zero_formatted_2d);
+                    endMinutesEditText.setText(R.string.zero_formatted_2d);
+                }
+
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        startHoursEditText.setEnabled(b);
+                        startMinutesEditText.setEnabled(b);
+                        endHoursEditText.setEnabled(b);
+                        endMinutesEditText.setEnabled(b);
+                    }
+                });
             }
-            textView.setText(s);
-            textView.setTextSize(16);
-            textView.setPadding(15, 15, 15, 15);
-            openings.addView(textView);
         }
     }
 

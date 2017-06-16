@@ -42,4 +42,14 @@
     <string name="locationing_disabled_message">You will not be able to occupy reserved seats while locationing is disabled.</string>
     <string name="update">Update</string>
     <string name="revert">Revert</string>
+    <string name="colon">:</string>
+    <string name="hyphen">-</string>
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="zero_formatted_2d">00</string>
 </resources>
