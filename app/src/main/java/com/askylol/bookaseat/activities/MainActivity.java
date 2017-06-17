@@ -9,9 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -72,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private List<View> views = new ArrayList<>();
 
     private Calendar selectedDateTime = Calendar.getInstance();
+    private TimeOfDay startTime;
     private Timer trackTimer = new Timer();
 
     ValueEventListener libraryChangedListener = new ValueEventListener() {
@@ -94,29 +93,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         selectedDateTime = Calendar.getInstance();
+        startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
+        initializeStartTimeButton();
 
         updateDate((Button) findViewById(R.id.date_button));
 
         tileView = (TileView) findViewById(R.id.tile_view);
         tileView.setSize(4000, 2000);
-
-        TimeOfDay timeOfDay = CalendarUtils.getTimeOfDay(Calendar.getInstance());
-        NumberPicker hoursPicker = (NumberPicker) findViewById(R.id.hours);
-        NumberPicker minutesPicker = (NumberPicker) findViewById(R.id.minutes);
-        setNumberPickerDividerColor(hoursPicker, Color.TRANSPARENT);
-        setNumberPickerDividerColor(minutesPicker, Color.TRANSPARENT);
-
-        int quarter = (int) Math.ceil(timeOfDay.minute / 15.0);
-        minutesPicker.setMinValue(0);
-        minutesPicker.setMaxValue(3);
-        minutesPicker.setDisplayedValues(new String[]{"00", "15", "30", "45"});
-        minutesPicker.setValue(quarter == 4 ? 0 : quarter);
-        hoursPicker.setMinValue(0);
-        hoursPicker.setMaxValue(23);
-        hoursPicker.setDisplayedValues(new String[]{"00", "01", "02", "03",
-                "04", "05", "06", "07", "08", "09", "10", "11", "12", "13",
-                "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"});
-        hoursPicker.setValue(timeOfDay.hour + (timeOfDay.minute > 45 ? 1 : 0));
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference libraryRef = database.getReference("libraries").child("library5");
@@ -328,10 +311,6 @@ public class MainActivity extends AppCompatActivity {
 
                         dialog.show();
 
-                        NumberPicker hoursPicker = (NumberPicker) findViewById(R.id.hours);
-                        NumberPicker minutesPicker = (NumberPicker) findViewById(R.id.minutes);
-
-                        final TimeOfDay startTime = new TimeOfDay(hoursPicker.getValue(), minutesPicker.getValue() * 15);
                         final TimeOfDay endTime = startTime.add(1, 0);
 
                         initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.endTimeButton), endTime);
@@ -396,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
         mDatePicker.show();
     }
 
-    public void onTimeClick(View view) {
+    public void onStartTimeClick(View view) {
         final Button timeButton = (Button) view;
         TimePickerDialog mTimePicker =
                 new TimePickerDialog(MainActivity.this, new TimePickerDialog.OnTimeSetListener() {
@@ -410,6 +389,58 @@ public class MainActivity extends AppCompatActivity {
                 }, selectedDateTime.get(Calendar.HOUR_OF_DAY), selectedDateTime.get(Calendar.MINUTE), true);
         mTimePicker.setTitle("Select Time");
         mTimePicker.show();
+    }
+
+    private void initializeStartTimeButton() {
+        final Button button = (Button) findViewById(R.id.start_time_button);
+
+        button.setText(CalendarUtils.getTimeString(startTime));
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog timePickerDialog = new AlertDialog.Builder(MainActivity.this)
+                        .setView(R.layout.time_spinner)
+                        .setNegativeButton(R.string.cancel, null)
+                        .create();
+
+                timePickerDialog.setButton(TimePickerDialog.BUTTON_POSITIVE, getString(R.string.set), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        NumberPicker hoursPicker = (NumberPicker) timePickerDialog.findViewById(R.id.hours);
+                        NumberPicker minutesPicker = (NumberPicker) timePickerDialog.findViewById(R.id.minutes);
+
+                        if (hoursPicker == null || minutesPicker == null) {
+                            return;
+                        }
+
+                        startTime.hour = hoursPicker.getValue();
+                        startTime.minute = minutesPicker.getValue() * 15;
+                        button.setText(CalendarUtils.getTimeString(startTime));
+                    }
+                });
+
+                timePickerDialog.show();
+
+                NumberPicker minutesPicker = (NumberPicker) timePickerDialog.findViewById(R.id.minutes);
+                NumberPicker hoursPicker = (NumberPicker) timePickerDialog.findViewById(R.id.hours);
+
+                if (minutesPicker == null || hoursPicker == null) {
+                    return;
+                }
+
+                int quarter = (int) Math.ceil(startTime.minute / 15.0);
+                minutesPicker.setMinValue(0);
+                minutesPicker.setMaxValue(3);
+                minutesPicker.setDisplayedValues(new String[]{"00", "15", "30", "45"});
+                minutesPicker.setValue(quarter == 4 ? 0 : quarter);
+                hoursPicker.setMinValue(0);
+                hoursPicker.setMaxValue(23);
+                hoursPicker.setDisplayedValues(new String[]{"00", "01", "02", "03",
+                        "04", "05", "06", "07", "08", "09", "10", "11", "12", "13",
+                        "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"});
+                hoursPicker.setValue(startTime.hour + (startTime.minute > 45 ? 1 : 0));
+            }
+        });
     }
 
     private void initializeTimeButton(final AlertDialog alertDialog, final Button button, final TimeOfDay timeOfDay) {
@@ -484,14 +515,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        NumberPicker hoursPicker = (NumberPicker) findViewById(R.id.hours);
-        NumberPicker minutesPicker = (NumberPicker) findViewById(R.id.minutes);
-
-        String startTime[] = new String[]{String.valueOf(hoursPicker.getValue()),
-                String.valueOf(minutesPicker.getValue() * 15)};
         String endTime[] = endTimeButton.getText().toString().split(":");
 
-        long startMins = Integer.parseInt(startTime[0]) * 60 + Integer.parseInt(startTime[1]);
+        long startMins = startTime.hour * 60 + startTime.minute;
         long endMins = Integer.parseInt(endTime[0]) * 60 + Integer.parseInt(endTime[1]);
 
         long diff = endMins - startMins;
@@ -499,8 +525,8 @@ public class MainActivity extends AppCompatActivity {
         long mins = diff % 60;
 
         Calendar startCalendar = (Calendar) selectedDateTime.clone();
-        startCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(startTime[0]));
-        startCalendar.set(Calendar.MINUTE, Integer.parseInt(startTime[1]));
+        startCalendar.set(Calendar.HOUR_OF_DAY, startTime.hour);
+        startCalendar.set(Calendar.MINUTE, startTime.minute);
         Calendar endCalendar = (Calendar) selectedDateTime.clone();
         endCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(endTime[0]));
         endCalendar.set(Calendar.MINUTE, Integer.parseInt(endTime[1]));
@@ -549,21 +575,5 @@ public class MainActivity extends AppCompatActivity {
                 ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
             }
         }, 0, 30000);
-    }
-
-    private void setNumberPickerDividerColor(NumberPicker picker, int color) {
-        java.lang.reflect.Field[] pickerFields = NumberPicker.class.getDeclaredFields();
-        for (java.lang.reflect.Field pf : pickerFields) {
-            if (pf.getName().equals("mSelectionDivider")) {
-                pf.setAccessible(true);
-                try {
-                    ColorDrawable colorDrawable = new ColorDrawable(color);
-                    pf.set(picker, colorDrawable);
-                } catch (IllegalArgumentException | Resources.NotFoundException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-                break;
-            }
-        }
     }
 }
