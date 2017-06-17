@@ -154,7 +154,11 @@ public class MainActivity extends AppCompatActivity {
                             c = AboutActivity.class;
                             break;
                         case R.id.nav_opening:
-                            c = OpeningHoursActivity.class;
+                            if (Data.INSTANCE.library.isAdmin(Data.INSTANCE.username)) {
+                                c = OpeningHoursPersonnelActivity.class;
+                            } else {
+                                c = OpeningHoursActivity.class;
+                            }
                             break;
                         case R.id.nav_orders:
                             c = MyOrdersActivity.class;

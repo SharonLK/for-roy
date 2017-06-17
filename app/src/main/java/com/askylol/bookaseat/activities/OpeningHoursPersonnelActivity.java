@@ -49,7 +49,7 @@ public class OpeningHoursPersonnelActivity extends AppCompatActivity {
     }
 
     public void updateButtonOnClick(View view) {
-        Data.INSTANCE.library.setOpeningHours(openingHoursFromActivity());
+        Data.INSTANCE.library.updateOpeningHours(openingHoursFromActivity());
     }
 
     public void revertButtonOnClick(View view) {

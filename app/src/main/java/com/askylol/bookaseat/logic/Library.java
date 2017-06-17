@@ -103,12 +103,21 @@ public class Library {
     }
 
     /**
-     * Sets libraries' opening hours to the given parameter.
+     * Sets libraries' opening hours to the given parameter. This method also updates the opening
+     * hours object in the database.
      *
      * @param openingHours new opening hours
      */
-    public void setOpeningHours(OpeningHours openingHours) {
+    public void updateOpeningHours(OpeningHours openingHours) {
         this.openingHours = openingHours;
+
+        libraryRef.child("openingHours")
+                .setValue(openingHours, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        System.out.println("Opening Hours updates successfully");
+                    }
+                });
     }
 
     /**
@@ -325,10 +334,10 @@ public class Library {
     /**
      * Checks whether or not the given user is an admin of this library.
      *
-     * @param user user to check
+     * @param username username to check
      * @return <code>true</code> if the user is an admin, <code>false</code> otherwise
      */
-    public boolean isAdmin(User user) {
-        return false; // TODO
+    public boolean isAdmin(String username) {
+        return username.equals(""); // TODO
     }
 }
