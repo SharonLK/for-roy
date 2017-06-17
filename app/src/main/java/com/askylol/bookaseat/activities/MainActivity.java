@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
         selectedDateTime = Calendar.getInstance();
 
-//        updateTime((Button) findViewById(R.id.time_button)); // TODO
         updateDate((Button) findViewById(R.id.date_button));
 
         tileView = (TileView) findViewById(R.id.tile_view);
@@ -257,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         selectedDateTime.setTimeInMillis(savedInstanceState.getLong(SELECTED_DATE_TIME_KEY));
-//        updateTime((Button) findViewById(R.id.time_button)); // TODO
         updateDate((Button) findViewById(R.id.date_button));
     }
 
@@ -336,7 +334,6 @@ public class MainActivity extends AppCompatActivity {
                         final TimeOfDay startTime = new TimeOfDay(hoursPicker.getValue(), minutesPicker.getValue() * 15);
                         final TimeOfDay endTime = startTime.add(1, 0);
 
-                        initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.startTimeButton), startTime);
                         initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.endTimeButton), endTime);
 
                         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
@@ -481,15 +478,17 @@ public class MainActivity extends AppCompatActivity {
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
 
-        Button startTimeButton = (Button) dialog.findViewById(R.id.startTimeButton);
         Button endTimeButton = (Button) dialog.findViewById(R.id.endTimeButton);
 
-        if (label == null || cancelButton == null || reserveButton == null ||
-                startTimeButton == null || endTimeButton == null) {
+        if (label == null || cancelButton == null || reserveButton == null) {
             return;
         }
 
-        String startTime[] = startTimeButton.getText().toString().split(":");
+        NumberPicker hoursPicker = (NumberPicker) findViewById(R.id.hours);
+        NumberPicker minutesPicker = (NumberPicker) findViewById(R.id.minutes);
+
+        String startTime[] = new String[]{String.valueOf(hoursPicker.getValue()),
+                String.valueOf(minutesPicker.getValue() * 15)};
         String endTime[] = endTimeButton.getText().toString().split(":");
 
         long startMins = Integer.parseInt(startTime[0]) * 60 + Integer.parseInt(startTime[1]);
