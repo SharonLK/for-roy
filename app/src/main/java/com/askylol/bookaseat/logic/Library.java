@@ -1,7 +1,6 @@
 package com.askylol.bookaseat.logic;
 
 import com.askylol.bookaseat.utils.CalendarUtils;
-import com.askylol.bookaseat.utils.Data;
 import com.askylol.bookaseat.utils.OpeningHours;
 import com.askylol.bookaseat.utils.Pair;
 import com.askylol.bookaseat.utils.TimeOfDay;
@@ -321,5 +320,15 @@ public class Library {
 
             }
         });
+    }
+
+    /**
+     * Checks whether or not the given user is an admin of this library.
+     *
+     * @param user user to check
+     * @return <code>true</code> if the user is an admin, <code>false</code> otherwise
+     */
+    public boolean isAdmin(User user) {
+        return false; // TODO
     }
 }
