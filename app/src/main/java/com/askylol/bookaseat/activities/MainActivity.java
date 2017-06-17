@@ -52,6 +52,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.qozix.tileview.TileView;
 import com.qozix.tileview.hotspots.HotSpot;
+import com.qozix.tileview.widgets.ZoomPanLayout;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         tileView = (TileView) findViewById(R.id.tile_view);
         tileView.setSize(4000, 2000);
+        tileView.setMinimumScaleMode(ZoomPanLayout.MinimumScaleMode.FIT);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference libraryRef = database.getReference("libraries").child("library5");
