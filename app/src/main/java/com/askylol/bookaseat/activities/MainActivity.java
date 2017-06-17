@@ -392,6 +392,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeStartTimeButton() {
+        startTime.minute = (int) Math.ceil(startTime.minute / 15.0) * 15;
+        startTime.hour = startTime.hour + (startTime.minute > 45 ? 1 : 0);
+
+        // Make sure we don't have time like 14:60, but instead 14:00
+        if (startTime.minute >= 60) {
+            startTime.minute = 0;
+        }
+
         final Button button = (Button) findViewById(R.id.start_time_button);
 
         button.setText(CalendarUtils.getTimeString(startTime));
