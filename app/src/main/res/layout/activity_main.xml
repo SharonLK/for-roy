@@ -53,6 +53,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     android:descendantFocusability="blocksDescendants"
+                    android:scaleX="1.5"
                     android:scaleY="1.5" />
 
                 <TextView
@@ -60,6 +61,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginStart="5dp"
                     android:text="@string/colon" />
 
                 <NumberPicker
@@ -67,6 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     android:descendantFocusability="blocksDescendants"
+                    android:scaleX="1.5"
                     android:scaleY="1.5" />
 
             </LinearLayout>
