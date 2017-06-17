@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -93,11 +95,29 @@ public class MainActivity extends AppCompatActivity {
 
         selectedDateTime = Calendar.getInstance();
 
-        updateTime((Button) findViewById(R.id.time_button));
+//        updateTime((Button) findViewById(R.id.time_button)); // TODO
         updateDate((Button) findViewById(R.id.date_button));
 
         tileView = (TileView) findViewById(R.id.tile_view);
         tileView.setSize(4000, 2000);
+
+        TimeOfDay timeOfDay = CalendarUtils.getTimeOfDay(Calendar.getInstance());
+        NumberPicker hoursPicker = (NumberPicker) findViewById(R.id.hours);
+        NumberPicker minutesPicker = (NumberPicker) findViewById(R.id.minutes);
+        setNumberPickerDividerColor(hoursPicker, Color.TRANSPARENT);
+        setNumberPickerDividerColor(minutesPicker, Color.TRANSPARENT);
+
+        int quarter = (int) Math.ceil(timeOfDay.minute / 15.0);
+        minutesPicker.setMinValue(0);
+        minutesPicker.setMaxValue(3);
+        minutesPicker.setDisplayedValues(new String[]{"00", "15", "30", "45"});
+        minutesPicker.setValue(quarter == 4 ? 0 : quarter);
+        hoursPicker.setMinValue(0);
+        hoursPicker.setMaxValue(23);
+        hoursPicker.setDisplayedValues(new String[]{"00", "01", "02", "03",
+                "04", "05", "06", "07", "08", "09", "10", "11", "12", "13",
+                "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"});
+        hoursPicker.setValue(timeOfDay.hour + (timeOfDay.minute > 45 ? 1 : 0));
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference libraryRef = database.getReference("libraries").child("library5");
@@ -237,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         selectedDateTime.setTimeInMillis(savedInstanceState.getLong(SELECTED_DATE_TIME_KEY));
-        updateTime((Button) findViewById(R.id.time_button));
+//        updateTime((Button) findViewById(R.id.time_button)); // TODO
         updateDate((Button) findViewById(R.id.date_button));
     }
 
@@ -310,7 +330,10 @@ public class MainActivity extends AppCompatActivity {
 
                         dialog.show();
 
-                        final TimeOfDay startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
+                        NumberPicker hoursPicker = (NumberPicker) findViewById(R.id.hours);
+                        NumberPicker minutesPicker = (NumberPicker) findViewById(R.id.minutes);
+
+                        final TimeOfDay startTime = new TimeOfDay(hoursPicker.getValue(), minutesPicker.getValue() * 15);
                         final TimeOfDay endTime = startTime.add(1, 0);
 
                         initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.startTimeButton), startTime);
@@ -527,5 +550,21 @@ public class MainActivity extends AppCompatActivity {
                 ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
             }
         }, 0, 30000);
+    }
+
+    private void setNumberPickerDividerColor(NumberPicker picker, int color) {
+        java.lang.reflect.Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+        for (java.lang.reflect.Field pf : pickerFields) {
+            if (pf.getName().equals("mSelectionDivider")) {
+                pf.setAccessible(true);
+                try {
+                    ColorDrawable colorDrawable = new ColorDrawable(color);
+                    pf.set(picker, colorDrawable);
+                } catch (IllegalArgumentException | Resources.NotFoundException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
     }
 }

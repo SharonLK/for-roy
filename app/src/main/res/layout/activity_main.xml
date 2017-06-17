@@ -27,33 +27,47 @@
             android:orientation="vertical">
 
             <LinearLayout
+                style="?android:attr/buttonBarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
-                android:padding="5dp"
-                style="?android:attr/buttonBarStyle">
+                android:padding="5dp">
 
                 <Button
                     android:id="@+id/date_button"
+                    style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="5dp"
-                    android:onClick="onDateClick"
-                    style="?android:attr/buttonBarButtonStyle"/>
-                
+                    android:onClick="onDateClick" />
+
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="@android:color/darker_gray" />
 
-                <Button
-                    android:id="@+id/time_button"
+                <NumberPicker
+                    android:id="@+id/hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:descendantFocusability="blocksDescendants"
+                    android:scaleY="1.5" />
+
+                <TextView
+                    android:id="@+id/nekudataim"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:onClick="onTimeClick"
-                    style="?android:attr/buttonBarButtonStyle"/>
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/colon" />
+
+                <NumberPicker
+                    android:id="@+id/minutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:descendantFocusability="blocksDescendants"
+                    android:scaleY="1.5" />
 
             </LinearLayout>
 

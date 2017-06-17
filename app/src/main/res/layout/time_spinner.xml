@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:gravity="center_horizontal"
     android:orientation="horizontal">
 
     <NumberPicker
         android:id="@+id/hours"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="70dp"
         android:layout_toLeftOf="@+id/nekudataim"
-        android:descendantFocusability="blocksDescendants" />
+        android:descendantFocusability="blocksDescendants"
+        android:scaleX="2.5"
+        android:scaleY="2.5" />
 
     <TextView
         android:id="@id/nekudataim"
@@ -19,14 +21,18 @@
         android:layout_alignBottom="@+id/minutes"
         android:layout_alignTop="@id/hours"
         android:layout_centerHorizontal="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
         android:gravity="center_vertical"
         android:text=":" />
 
     <NumberPicker
         android:id="@id/minutes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="70dp"
         android:layout_toRightOf="@id/nekudataim"
-        android:descendantFocusability="blocksDescendants" />
+        android:descendantFocusability="blocksDescendants"
+        android:scaleX="2.5"
+        android:scaleY="2.5" />
 
 </RelativeLayout>
