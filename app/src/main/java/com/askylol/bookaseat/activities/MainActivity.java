@@ -262,8 +262,18 @@ public class MainActivity extends AppCompatActivity {
             final Point location = seat.getLocation();
             final String id = entry.getKey();
 
-            final boolean reservedByUser = Data.INSTANCE.library.reservationByUser(selectedDateTime, Data.INSTANCE.username);
-            final boolean free = Data.INSTANCE.library.isSeatFree(id, selectedDateTime); // TODO
+            Button dateButton = (Button) findViewById(R.id.date_button);
+            String[] date = dateButton.getText().toString().split("\\.");
+
+            Calendar selectedCalendar = Calendar.getInstance();
+            selectedCalendar.set(Calendar.HOUR_OF_DAY, startTime.hour);
+            selectedCalendar.set(Calendar.MINUTE, startTime.minute);
+            selectedCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[0]));
+            selectedCalendar.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
+            selectedCalendar.set(Calendar.YEAR, Integer.parseInt(date[2]));
+
+            final boolean reservedByUser = Data.INSTANCE.library.reservationByUser(selectedCalendar, Data.INSTANCE.username);
+            final boolean free = Data.INSTANCE.library.isSeatFree(id, selectedCalendar); // TODO
 
             HotSpot hotSpot = new HotSpot();
             hotSpot.setTag(this);
@@ -274,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
             RelativeLayout relativeLayout = new RelativeLayout(this);
             ImageView logo = new ImageView(this);
 
-            final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedDateTime, Data.INSTANCE.username);
+            final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedCalendar, Data.INSTANCE.username);
 
             if (reservation != null) {
                 logo.setImageResource(R.drawable.chair_icon_occupied_current);
@@ -298,9 +308,11 @@ public class MainActivity extends AppCompatActivity {
                         dialog.show();
                     }
                 });
+            } else if (!free) {
+                logo.setImageResource(R.drawable.chair_icon_occupied);
             } else if (reservedByUser) {
                 logo.setImageResource(R.drawable.chair_unavailable);
-            } else if (free) {
+            } else {
                 logo.setImageResource(R.drawable.chair_icon);
 
                 hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
@@ -342,8 +354,6 @@ public class MainActivity extends AppCompatActivity {
                         recalculateInfoLabel(dialog);
                     }
                 });
-            } else {
-                logo.setImageResource(R.drawable.chair_icon_occupied);
             }
 
             RelativeLayout.LayoutParams logoLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -426,6 +436,8 @@ public class MainActivity extends AppCompatActivity {
                         startTime.hour = hoursPicker.getValue();
                         startTime.minute = minutesPicker.getValue() * 15;
                         button.setText(CalendarUtils.getTimeString(startTime));
+
+                        updateTileViewViews();
                     }
                 });
 

@@ -260,20 +260,8 @@ public class Library {
      */
     public boolean reservationByUser(Calendar selectedDateTime, String username) {
         for (String seatId : reservations.keySet()) {
-            String date = CalendarUtils.getDateString(selectedDateTime).replace('.', '_');
-
-            if (!reservations.get(seatId).containsKey(date)) {
-                return false;
-            }
-
-            TimeOfDay time = CalendarUtils.getTimeOfDay(selectedDateTime);
-
-            for (Reservation reservation : reservations.get(seatId).get(date).values()) {
-                System.out.println(reservation.getUser());
-                if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfter(time) &&
-                        reservation.getUser().toLowerCase().equals(username.toLowerCase())) {
-                    return true;
-                }
+            if (reservationByUser(seatId, selectedDateTime, username) != null) {
+                return true;
             }
         }
 
