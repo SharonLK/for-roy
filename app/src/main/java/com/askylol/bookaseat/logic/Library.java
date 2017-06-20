@@ -69,34 +69,6 @@ public class Library {
     }
 
     /**
-     * Frees the wanted seat.
-     *
-     * @param seatId seat to be freed
-     */
-    public void free(String seatId) {
-        if (libraryRef == null) {
-            //TODO: handle
-            throw new IllegalStateException("No reference to library on db");
-        }
-        Seat seat = getSeatById(seatId);
-
-        if (seat == null) {
-            return;
-        }
-
-        libraryRef
-                .child("idToSeat")
-                .child(String.valueOf(seatId))
-                .setValue(seat, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError,
-                                           DatabaseReference databaseReference) {
-                        //TODO: acknowledge success, nah
-                    }
-                });
-    }
-
-    /**
      * @return current library opening hours
      */
     public OpeningHours getOpeningHours() {
@@ -121,10 +93,18 @@ public class Library {
                 });
     }
 
+    /**
+     * @return idle limit
+     */
     public int getIdleLimit() {
         return idleLimit;
     }
 
+    /**
+     * Updates the current idle limit to the given value and notifies the database.
+     *
+     * @param idleLimit new idle limit
+     */
     public void updateIdleLimit(int idleLimit) {
         this.idleLimit = idleLimit;
 
