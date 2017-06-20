@@ -174,27 +174,29 @@ public class Library {
         return true;
     }
 
-    public boolean isSeatFree(Calendar startDateTime, Calendar endDateTime) {
+    public boolean isSeatFree(String seatId, Calendar startDateTime, Calendar endDateTime) {
         TimeOfDay start = CalendarUtils.getTimeOfDay(startDateTime);
         TimeOfDay end = CalendarUtils.getTimeOfDay(endDateTime);
 
         String date = CalendarUtils.getDateString(startDateTime).replaceAll("\\.", "_");
 
-        for (Map<String, Map<String, Reservation>> seatReservations : reservations.values()) {
-            for (Map.Entry<String, Map<String, Reservation>> dateReservations : seatReservations.entrySet()) {
-                String resDate = dateReservations.getKey();
+        if (!reservations.containsKey(seatId)) {
+            return true;
+        }
 
-                for (Reservation reservation : dateReservations.getValue().values()) {
-                    if (!date.equals(resDate)) {
-                        continue;
-                    }
+        for (Map.Entry<String, Map<String, Reservation>> seatReservations : reservations.get(seatId).entrySet()) {
+            String resDate = seatReservations.getKey();
 
-                    TimeOfDay resStart = reservation.getStart();
-                    TimeOfDay resEnd = reservation.getEnd();
+            for (Reservation reservation : seatReservations.getValue().values()) {
+                if (!date.equals(resDate)) {
+                    continue;
+                }
 
-                    if (start.isBefore(resEnd) && resStart.isBefore(end)) {
-                        return false;
-                    }
+                TimeOfDay resStart = reservation.getStart();
+                TimeOfDay resEnd = reservation.getEnd();
+
+                if (start.isBefore(resEnd) && resStart.isBefore(end)) {
+                    return false;
                 }
             }
         }

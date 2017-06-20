@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
 
                         final TimeOfDay endTime = startTime.add(1, 0);
 
-                        initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.endTimeButton), endTime);
+                        initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.endTimeButton), endTime, id);
 
                         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
                         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
-                        recalculateInfoLabel(dialog);
+                        recalculateInfoLabel(dialog, id);
                     }
                 });
             }
@@ -465,7 +465,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initializeTimeButton(final AlertDialog alertDialog, final Button button, final TimeOfDay timeOfDay) {
+    private void initializeTimeButton(final AlertDialog alertDialog, final Button button, final TimeOfDay timeOfDay, final String seatId) {
         timeOfDay.minute = (int) Math.ceil(timeOfDay.minute / 15.0) * 15;
         timeOfDay.hour = timeOfDay.hour + (timeOfDay.minute > 45 ? 1 : 0);
 
@@ -497,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
                         timeOfDay.minute = minutesPicker.getValue() * 15;
                         button.setText(CalendarUtils.getTimeString(timeOfDay));
 
-                        recalculateInfoLabel(alertDialog);
+                        recalculateInfoLabel(alertDialog, seatId);
                     }
                 });
 
@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void recalculateInfoLabel(AlertDialog dialog) {
+    private void recalculateInfoLabel(AlertDialog dialog, String seatId) {
         TextView label = (TextView) dialog.findViewById(R.id.infoLabel);
 
         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
@@ -557,7 +557,7 @@ public class MainActivity extends AppCompatActivity {
             label.setText(R.string.invalid_duration);
             label.setTextColor(Color.RED);
             reserveButton.setEnabled(false);
-        } else if (!Data.INSTANCE.library.isSeatFree(startCalendar, endCalendar)) {
+        } else if (!Data.INSTANCE.library.isSeatFree(seatId, startCalendar, endCalendar)) {
             label.setText(R.string.seat_already_reserved);
             label.setTextColor(Color.RED);
             reserveButton.setEnabled(false);

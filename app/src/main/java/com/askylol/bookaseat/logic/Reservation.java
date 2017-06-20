@@ -9,6 +9,7 @@ public class Reservation {
     private TimeOfDay start;
     private TimeOfDay end;
     private String user;
+    private boolean occupied = false;
 
     private Reservation() {
 
@@ -42,6 +43,14 @@ public class Reservation {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public boolean isOccupied() {
+        return occupied;
+    }
+
+    public void setOccupied(boolean occupied) {
+        this.occupied = occupied;
     }
 
     @Override
