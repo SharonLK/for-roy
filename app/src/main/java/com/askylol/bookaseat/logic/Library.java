@@ -23,6 +23,7 @@ public class Library {
     private Map<String, User> users = new HashMap<>();
     private Map<String, Map<String, Map<String, Reservation>>> reservations = new HashMap<>();
     private DatabaseReference libraryRef;
+    private int idleLimit;
 
     private Library() {
 
@@ -116,6 +117,22 @@ public class Library {
                     @Override
                     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                         System.out.println("Opening Hours updates successfully");
+                    }
+                });
+    }
+
+    public int getIdleLimit() {
+        return idleLimit;
+    }
+
+    public void updateIdleLimit(int idleLimit) {
+        this.idleLimit = idleLimit;
+
+        libraryRef.child("idleLimit")
+                .setValue(idleLimit, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        System.out.println("Idle limit updated successfully");
                     }
                 });
     }

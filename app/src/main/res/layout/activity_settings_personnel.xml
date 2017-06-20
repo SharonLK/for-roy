@@ -499,6 +499,7 @@
                 android:text="@string/idle_time_limit" />
 
             <EditText
+                android:id="@+id/idle_limit_edit_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
