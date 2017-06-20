@@ -24,11 +24,11 @@ import java.util.Map;
  * Created by Sharon on 16-Jun-17.
  */
 
-public class OpeningHoursPersonnelActivity extends AppCompatActivity {
+public class SettingsPersonnelActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_opening_hours_personnel);
+        setContentView(R.layout.activity_settings_personnel);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);

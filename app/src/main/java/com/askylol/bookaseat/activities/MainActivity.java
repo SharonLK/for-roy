@@ -158,17 +158,17 @@ public class MainActivity extends AppCompatActivity {
                             c = AboutActivity.class;
                             break;
                         case R.id.nav_opening:
-                            if (Data.INSTANCE.library.isAdmin(Data.INSTANCE.username)) {
-                                c = OpeningHoursPersonnelActivity.class;
-                            } else {
-                                c = OpeningHoursActivity.class;
-                            }
+                            c = OpeningHoursActivity.class;
                             break;
                         case R.id.nav_orders:
                             c = MyOrdersActivity.class;
                             break;
                         case R.id.nav_settings:
-                            c = SettingsActivity.class;
+                            if (Data.INSTANCE.library.isAdmin(Data.INSTANCE.username)) {
+                                c = SettingsPersonnelActivity.class;
+                            } else {
+                                c = SettingsActivity.class;
+                            }
                             break;
                         default:
                             c = null;
