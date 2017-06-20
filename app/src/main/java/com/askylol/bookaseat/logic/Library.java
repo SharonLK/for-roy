@@ -178,13 +178,21 @@ public class Library {
         TimeOfDay start = CalendarUtils.getTimeOfDay(startDateTime);
         TimeOfDay end = CalendarUtils.getTimeOfDay(endDateTime);
 
+        String date = CalendarUtils.getDateString(startDateTime).replaceAll("\\.", "_");
+
         for (Map<String, Map<String, Reservation>> seatReservations : reservations.values()) {
-            for (Map<String, Reservation> dateReservations : seatReservations.values()) {
-                for (Reservation reservation : dateReservations.values()) {
+            for (Map.Entry<String, Map<String, Reservation>> dateReservations : seatReservations.entrySet()) {
+                String resDate = dateReservations.getKey();
+
+                for (Reservation reservation : dateReservations.getValue().values()) {
+                    if (!date.equals(resDate)) {
+                        continue;
+                    }
+
                     TimeOfDay resStart = reservation.getStart();
                     TimeOfDay resEnd = reservation.getEnd();
 
-                    if (start.isBefore(resStart) && resEnd.isBefore(end)) {
+                    if (start.isBefore(resEnd) && resStart.isBefore(end)) {
                         return false;
                     }
                 }
