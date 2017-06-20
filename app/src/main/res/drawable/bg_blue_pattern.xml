@@ -1,0 +1,9 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <bitmap
+            android:antialias="true"
+            android:dither="true"
+            android:src="@drawable/bg_blue_pattern_img"
+            android:tileMode="repeat" />
+    </item>
+</layer-list>

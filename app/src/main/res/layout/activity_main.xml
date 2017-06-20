@@ -59,10 +59,16 @@
 
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
             <com.qozix.tileview.TileView
                 android:id="@+id/tile_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_blue_pattern"/>
 
         </LinearLayout>
     </LinearLayout>
