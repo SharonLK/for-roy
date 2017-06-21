@@ -3,6 +3,7 @@ package com.askylol.bookaseat.activities;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             // TODO: handle errors
         }
     };
+    private BroadcastReceiver locationService = new LocationService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,9 +202,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
-        registerReceiver(new LocationService(), new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
 
         //TODO: do we need to check for other permissions?
         if (ContextCompat.checkSelfPermission(
@@ -597,5 +596,18 @@ public class MainActivity extends AppCompatActivity {
                 ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
             }
         }, 0, 30000);
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(locationService);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
     }
 }
