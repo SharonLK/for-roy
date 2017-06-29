@@ -118,6 +118,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInAccount acct = result.getSignInAccount();
 //            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             Log.d("HI", "Account email: " + (acct == null? " acct null" : acct.getEmail()));
+
+            if (acct != null) {
+                Data.INSTANCE.username = acct.getEmail();
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+            }
+
 //            mStatusTextView.setText("WHATEVER");
             updateUI(true);
         } else {
@@ -129,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void updateUI(boolean signedIn) {
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
+//            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
 //            mStatusTextView.setText(R.string.signed_out);
 //            mStatusTextView.setText("SIGNED OUT");
@@ -189,23 +196,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        // [START_EXCLUDE]
                         updateUI(false);
-                        // [END_EXCLUDE]
                     }
                 });
     }
-    // [END signOut]
 
-    // [START revokeAccess]
+
     private void revokeAccess() {
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        // [START_EXCLUDE]
                         updateUI(false);
-                        // [END_EXCLUDE]
                     }
                 });
     }

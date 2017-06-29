@@ -12,7 +12,7 @@
     <string name="nav_settings">הגדרות</string>
     <string name="password">סיסמה</string>
     <string name="sign_up">הרשמה</string>
-    <string name="welcome">ברוכים הבאים</string>
+    <string name="welcome">ברוכים הבאים!</string>
     <string name="cancel">ביטול</string>
     <string name="end_time">זמן סיום</string>
     <string name="reserve">הזמן</string>
@@ -53,4 +53,6 @@
     <string name="friday">שישי</string>
     <string name="saturday">שבת</string>
     <string name="zero_formatted_2d">00</string>
+    <string name="please_sign_in">על מנת להמשיך, אנא היכנס כמשתמש רשום</string>
+    <string name="nav_log_out">התנתק</string>
 </resources>

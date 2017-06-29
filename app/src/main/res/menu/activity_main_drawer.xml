@@ -6,34 +6,40 @@
             android:id="@+id/nav_library"
             android:icon="@drawable/ic_import_contacts_black_24dp"
             android:title="@string/nav_library" />
-    </group>
-
-    <group android:id="@+id/group2" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_orders"
             android:icon="@drawable/ic_content_paste_black_24dp"
             android:title="@string/nav_orders" />
-    </group>
-
-    <group android:id="@+id/group3" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_opening"
             android:icon="@drawable/ic_schedule_black_24dp"
             android:title="@string/nav_opening" />
     </group>
 
+    <!--<group android:id="@+id/group2" android:checkableBehavior="single">-->
+
+    <!--</group>-->
+
+    <!--<group android:id="@+id/group3" android:checkableBehavior="single">-->
+
+    <!--</group>-->
+
     <group android:id="@+id/group4" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/nav_settings" />
-    </group>
-
-    <group android:id="@+id/group5" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_about_us"
             android:icon="@drawable/ic_info_black_24dp"
             android:title="@string/nav_about_us" />
+    </group>
+
+    <group android:id="@+id/group5" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_log_out"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
+            android:title="@string/nav_log_out" />
     </group>
 
 </menu>
