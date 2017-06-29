@@ -3,6 +3,7 @@ package com.askylol.bookaseat.activities;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             // TODO: handle errors
         }
     };
+    private BroadcastReceiver locationService = new LocationService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,9 +203,6 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        registerReceiver(new LocationService(), new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-        ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
-
         //TODO: do we need to check for other permissions?
         if (ContextCompat.checkSelfPermission(
                 MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -272,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
             selectedCalendar.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
             selectedCalendar.set(Calendar.YEAR, Integer.parseInt(date[2]));
 
-            final boolean reservedByUser = Data.INSTANCE.library.reservationByUser(selectedCalendar, Data.INSTANCE.username);
+            final boolean reservedByUser = (Data.INSTANCE.library.reservationByUser(selectedCalendar, Data.INSTANCE.username) != null);
             final boolean free = Data.INSTANCE.library.isSeatFree(id, selectedCalendar); // TODO
 
             HotSpot hotSpot = new HotSpot();
@@ -287,7 +286,11 @@ public class MainActivity extends AppCompatActivity {
             final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedCalendar, Data.INSTANCE.username);
 
             if (reservation != null) {
-                logo.setImageResource(R.drawable.chair_icon_occupied_current);
+                logo.setImageResource(
+                        (reservation.isOccupied() ?
+                                R.drawable.chair_icon_occupied_current :
+                                R.drawable.chair_icon_reserved_current)
+                );
 
                 hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
                     @Override
@@ -597,5 +600,18 @@ public class MainActivity extends AppCompatActivity {
                 ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
             }
         }, 0, 30000);
+    }
+
+    @Override
+    protected void onPause() {
+        unregisterReceiver(locationService);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
     }
 }
