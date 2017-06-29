@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
             selectedCalendar.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
             selectedCalendar.set(Calendar.YEAR, Integer.parseInt(date[2]));
 
-            final boolean reservedByUser = Data.INSTANCE.library.reservationByUser(selectedCalendar, Data.INSTANCE.username);
+            final boolean reservedByUser = (Data.INSTANCE.library.reservationByUser(selectedCalendar, Data.INSTANCE.username) != null);
             final boolean free = Data.INSTANCE.library.isSeatFree(id, selectedCalendar); // TODO
 
             HotSpot hotSpot = new HotSpot();
@@ -286,7 +286,11 @@ public class MainActivity extends AppCompatActivity {
             final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedCalendar, Data.INSTANCE.username);
 
             if (reservation != null) {
-                logo.setImageResource(R.drawable.chair_icon_occupied_current);
+                logo.setImageResource(
+                        (reservation.isOccupied() ?
+                                R.drawable.chair_icon_occupied_current :
+                                R.drawable.chair_icon_reserved_current)
+                );
 
                 hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
                     @Override

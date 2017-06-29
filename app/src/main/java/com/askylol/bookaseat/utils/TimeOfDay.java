@@ -43,6 +43,10 @@ public class TimeOfDay {
         return new TimeOfDay(hour + additionHours, minute + additionMinutes);
     }
 
+    public TimeOfDay add(int additionMinutes) {
+        return new TimeOfDay(hour + additionMinutes / 60, minute + additionMinutes % 60);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

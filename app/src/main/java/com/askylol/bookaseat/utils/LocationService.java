@@ -7,15 +7,16 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 
+import com.askylol.bookaseat.logic.Library;
+import com.askylol.bookaseat.logic.Reservation;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Collections;
 
-import okhttp3.ConnectionSpec;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -75,16 +76,34 @@ public class LocationService extends BroadcastReceiver {
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        new AsyncTask<String, Void, JSONObject>() {
+        new AsyncTask<String, Void, Void>() {
             @Override
-            protected JSONObject doInBackground(String... params) {
+            protected Void doInBackground(String... params) {
                 try {
-                    return LocationService.track(context, Data.INSTANCE.username);
+                    JSONObject res = LocationService.track(context, Data.INSTANCE.username);
+                    if (res != null && res.getBoolean("success")
+                            && res.getString("location").equals("library")) {
+                        markReservedSeatForUser(Data.INSTANCE.username);
+                    }
+
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
                 return null;
             }
         }.execute(Data.INSTANCE.username);
+    }
+
+    private void markReservedSeatForUser(String username) {
+        Library library = Data.INSTANCE.library;
+        Calendar currentTime = Calendar.getInstance();
+        Pair<String, Reservation> reservationPair = library.reservationByUser(currentTime, username);
+        String seatId = reservationPair.first;
+        Reservation reservation = reservationPair.second;
+        if (reservation != null &&
+                reservation.getStart().add(library.getIdleLimit()).isAfter(CalendarUtils.getTimeOfDay(currentTime))) {
+            reservation.setOccupied(true);
+            library.updateReservation(seatId, reservation);
+        }
     }
 }

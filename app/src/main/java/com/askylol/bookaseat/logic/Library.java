@@ -279,20 +279,22 @@ public class Library {
     }
 
     /**
-     * Checks whether there is a seat reserved by the user at the given date and time
+     * Checks whether there is a seat reserved by the user at the given date and time.
+     * If there is, returns a pair of seatId and Reservation. Otherwise null.
      *
      * @param selectedDateTime date and time of reservation
      * @param username         username of the user
-     * @return <code>true</code> if user has a reservation, <code>false</code> otherwise
+     * @return Pair of seatId and Reservation if user has a reservation, <code>null</code> otherwise
      */
-    public boolean reservationByUser(Calendar selectedDateTime, String username) {
+    public Pair<String, Reservation> reservationByUser(Calendar selectedDateTime, String username) {
         for (String seatId : reservations.keySet()) {
-            if (reservationByUser(seatId, selectedDateTime, username) != null) {
-                return true;
+            Reservation reservation = reservationByUser(seatId, selectedDateTime, username);
+            if (reservation != null) {
+                return new Pair<>(seatId, reservation);
             }
         }
 
-        return false;
+        return null;
     }
 
     public Reservation getNearestReservation(String seatId, String date, TimeOfDay time) {
@@ -354,5 +356,23 @@ public class Library {
      */
     public boolean isAdmin(String username) {
         return username.equals(""); // TODO
+    }
+
+    public void updateReservation(String seatId, final Reservation reservation) {
+        getReservationsReferenceAt(seatId, CalendarUtils.getDateString(Calendar.getInstance()).replace('.', '_')).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, Reservation> reservationsMap = (Map<String, Reservation>) dataSnapshot.getValue();
+                for (Map.Entry<String, Reservation> entry : reservationsMap.entrySet()) {
+                    if (dataSnapshot.child(entry.getKey()).getValue(Reservation.class).equals(reservation))
+                        dataSnapshot.getRef().child(entry.getKey()).setValue(reservation);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
