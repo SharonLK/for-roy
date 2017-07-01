@@ -1,12 +1,18 @@
 package com.askylol.bookaseat.utils;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 
+import com.askylol.bookaseat.R;
+import com.askylol.bookaseat.activities.MainActivity;
 import com.askylol.bookaseat.logic.Library;
 import com.askylol.bookaseat.logic.Reservation;
 
@@ -23,6 +29,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class LocationService extends BroadcastReceiver {
 
@@ -81,9 +89,33 @@ public class LocationService extends BroadcastReceiver {
             protected Void doInBackground(String... params) {
                 try {
                     JSONObject res = LocationService.track(context, Data.INSTANCE.username);
-                    if (res != null && res.getBoolean("success")
-                            && res.getString("location").equals("library")) {
-                        markReservedSeatForUser(Data.INSTANCE.username);
+                    if (res != null && res.getBoolean("success")) {
+                        if (res.getString("location").equals("library")) {
+                            markReservedSeatForUser(Data.INSTANCE.username);
+                        } else {
+                            if (Data.INSTANCE.isSitting) {
+                                Data.INSTANCE.isSitting = false;
+
+                                Intent notificationIntent = new Intent(context, MainActivity.class);
+                                PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+
+                                PendingIntent pIntent = PendingIntent.getActivity(context, 123, new Intent(context, MainActivity.class), 0);
+                                Notification notification = new NotificationCompat.Builder(context)
+                                        .setSmallIcon(R.drawable.app_icon)
+                                        .setContentTitle(context.getString(R.string.notification_title))
+                                        .setContentText(context.getString(R.string.notification_content))
+                                        .setContentIntent(intent)
+                                        .setAutoCancel(true)
+                                        .addAction(R.drawable.ic_done_black_24dp, context.getString(R.string.yes), pIntent)
+                                        .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.no), pIntent)
+                                        .build();
+                                notification.defaults |= Notification.DEFAULT_SOUND;
+                                notification.defaults |= Notification.DEFAULT_VIBRATE;
+
+                                NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                                notificationManager.notify(0xFFFF, notification);
+                            }
+                        }
                     }
 
                 } catch (IOException | JSONException e) {

@@ -10,6 +10,7 @@ public class Reservation {
     private TimeOfDay end;
     private String user;
     private boolean occupied = false;
+    private TimeOfDay lastSeen;
 
     private Reservation() {
 
@@ -51,6 +52,14 @@ public class Reservation {
 
     public void setOccupied(boolean occupied) {
         this.occupied = occupied;
+    }
+
+    public TimeOfDay getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(TimeOfDay lastSeen) {
+        this.lastSeen = lastSeen;
     }
 
     @Override

@@ -10,4 +10,5 @@ public enum Data {
 
     public String username = null;
     public Library library = null;
+    public boolean isSitting = true;
 }
