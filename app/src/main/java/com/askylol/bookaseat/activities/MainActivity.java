@@ -46,6 +46,9 @@ import com.askylol.bookaseat.utils.OpeningHours;
 import com.askylol.bookaseat.utils.Pair;
 import com.askylol.bookaseat.utils.Point;
 import com.askylol.bookaseat.utils.TimeOfDay;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -156,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Class c;
                     switch (item.getItemId()) {
+                        case R.id.nav_log_out:
+                            c = null;
+                            signOut();
+                            break;
                         case R.id.nav_about_us:
                             c = AboutActivity.class;
                             break;
@@ -196,8 +203,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         startActivity(intent);
-                        drawerLayout.closeDrawers();
                     }
+                    drawerLayout.closeDrawers();
                     return true;
                 }
             });
@@ -613,5 +620,16 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
+    }
+
+    private void signOut() {
+        Auth.GoogleSignInApi.signOut(Data.INSTANCE.googleClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                    }
+                });
     }
 }
