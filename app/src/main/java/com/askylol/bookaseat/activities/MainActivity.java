@@ -293,11 +293,9 @@ public class MainActivity extends AppCompatActivity {
             final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedCalendar, Data.INSTANCE.username);
 
             if (reservation != null) {
-                logo.setImageResource(
-                        (reservation.isOccupied() ?
-                                R.drawable.chair_icon_occupied_current :
-                                R.drawable.chair_icon_reserved_current)
-                );
+                logo.setImageResource(reservation.isOccupied() ?
+                        R.drawable.chair_icon_occupied_current :
+                        R.drawable.chair_icon_reserved_current);
 
                 hotSpot.setHotSpotTapListener(new HotSpot.HotSpotTapListener() {
                     @Override

@@ -160,9 +160,20 @@ public class Library {
             return true;
         }
 
+        Calendar now = Calendar.getInstance();
+        String dateNow = CalendarUtils.getDateString(now).replace('.', '_');
+        TimeOfDay timeNow = CalendarUtils.getTimeOfDay(now);
+
         TimeOfDay time = CalendarUtils.getTimeOfDay(selectedDateTime);
 
         for (Reservation reservation : reservations.get(seatId).get(date).values()) {
+            // If seat not occupied and idle time has passed, the reservation is invalid
+            if (dateNow.equals(date) &&
+                    !reservation.isOccupied() &&
+                    timeNow.isAfter(reservation.getStart().add(0, idleLimit))) {
+                continue;
+            }
+
             if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfter(time)) {
                 return false;
             }
@@ -181,11 +192,22 @@ public class Library {
             return true;
         }
 
+        Calendar now = Calendar.getInstance();
+        String dateNow = CalendarUtils.getDateString(now).replace('.', '_');
+        TimeOfDay timeNow = CalendarUtils.getTimeOfDay(now);
+
         for (Map.Entry<String, Map<String, Reservation>> seatReservations : reservations.get(seatId).entrySet()) {
             String resDate = seatReservations.getKey();
 
             for (Reservation reservation : seatReservations.getValue().values()) {
                 if (!date.equals(resDate)) {
+                    continue;
+                }
+
+                // If seat not occupied and idle time has passed, the reservation is invalid
+                if (dateNow.equals(date) &&
+                        !reservation.isOccupied() &&
+                        timeNow.isAfter(reservation.getStart().add(0, idleLimit))) {
                     continue;
                 }
 
@@ -224,6 +246,17 @@ public class Library {
         TimeOfDay time = CalendarUtils.getTimeOfDay(selectedDateTime);
 
         for (Reservation reservation : reservations.get(seatId).get(date).values()) {
+            Calendar now = Calendar.getInstance();
+            String dateNow = CalendarUtils.getDateString(now).replace('.', '_');
+            TimeOfDay timeNow = CalendarUtils.getTimeOfDay(now);
+
+            // If seat not occupied and idle time has passed, the reservation is invalid
+            if (dateNow.equals(date) &&
+                    !reservation.isOccupied() &&
+                    timeNow.isAfter(reservation.getStart().add(0, idleLimit))) {
+                continue;
+            }
+
             if (reservation.getStart().isBeforeOrSame(time) && reservation.getEnd().isAfter(time) &&
                     reservation.getUser().toLowerCase().equals(username.toLowerCase())) {
                 return reservation;
