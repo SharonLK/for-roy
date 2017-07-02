@@ -89,12 +89,24 @@ public class LocationService extends BroadcastReceiver {
             protected Void doInBackground(String... params) {
                 try {
                     JSONObject res = LocationService.track(context, Data.INSTANCE.username);
-                    if (res != null && res.getBoolean("success")) {
-                        if (res.getString("location").equals("library")) {
-                            markReservedSeatForUser(Data.INSTANCE.username);
-                        } else {
-                            if (Data.INSTANCE.isSitting) {
-                                Data.INSTANCE.isSitting = false;
+
+                    if (res == null || !res.getBoolean("success")) {
+                        return null;
+                    }
+
+                    if (res.getString("location").equals("library")) {
+                        markReservedSeatForUser(Data.INSTANCE.username);
+                    } else {
+                        if (Data.INSTANCE.isSitting) {
+                            Data.INSTANCE.isSitting = false;
+
+                            Calendar now = Calendar.getInstance();
+                            Pair<String, Reservation> reservationPair = Data.INSTANCE.library.reservationByUser(now, Data.INSTANCE.username);
+
+                            if (reservationPair != null && reservationPair.first != null && reservationPair.second != null) {
+                                reservationPair.second.setOccupied(false);
+                                reservationPair.second.setLastSeen(CalendarUtils.getTimeOfDay(now));
+                                Data.INSTANCE.library.updateReservation(reservationPair.first, reservationPair.second);
 
                                 Intent notificationIntent = new Intent(context, MainActivity.class);
                                 PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
@@ -117,7 +129,6 @@ public class LocationService extends BroadcastReceiver {
                             }
                         }
                     }
-
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
