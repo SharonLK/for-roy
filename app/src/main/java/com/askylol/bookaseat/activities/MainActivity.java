@@ -259,6 +259,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateTileViewViews() {
+        if (Data.INSTANCE.library == null) {
+            return;
+        }
+
         for (View view : views) {
             tileView.removeView(view);
         }
@@ -603,6 +607,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
+
+                runOnUiThread(new TimerTask() {
+                    @Override
+                    public void run() {
+                        updateTileViewViews();
+                    }
+                });
             }
         }, 0, 30000);
     }
