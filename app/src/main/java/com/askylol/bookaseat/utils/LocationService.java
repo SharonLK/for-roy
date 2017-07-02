@@ -144,7 +144,7 @@ public class LocationService extends BroadcastReceiver {
         String seatId = reservationPair.first;
         Reservation reservation = reservationPair.second;
         if (reservation != null &&
-                reservation.getStart().add(library.getIdleLimit()).isAfter(CalendarUtils.getTimeOfDay(currentTime))) {
+                reservation.getStart().add(library.getMaxDelay()).isAfter(CalendarUtils.getTimeOfDay(currentTime))) {
             reservation.setOccupied(true);
             library.updateReservation(seatId, reservation);
         }

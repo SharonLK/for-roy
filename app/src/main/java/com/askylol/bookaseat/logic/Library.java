@@ -23,6 +23,7 @@ public class Library {
     private Map<String, User> users = new HashMap<>();
     private Map<String, Map<String, Map<String, Reservation>>> reservations = new HashMap<>();
     private DatabaseReference libraryRef;
+    private int maxDelay;
     private int idleLimit;
 
     private Library() {
@@ -118,6 +119,30 @@ public class Library {
     }
 
     /**
+     * @return for how long the user can be late for the reservation
+     */
+    public int getMaxDelay() {
+        return maxDelay;
+    }
+
+    /**
+     * Updates the current max delay to the given value and notifies the database.
+     *
+     * @param maxDelay new max delay
+     */
+    public void updateMaxDelay(int maxDelay) {
+        this.maxDelay = maxDelay;
+
+        libraryRef.child("maxDelay")
+                .setValue(maxDelay, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        System.out.println("Max delay updated successfully");
+                    }
+                });
+    }
+
+    /**
      * @param seatId seat to be returned
      * @return a seat
      */
@@ -170,7 +195,7 @@ public class Library {
             // If seat not occupied and idle time has passed, the reservation is invalid
             if (dateNow.equals(date) &&
                     !reservation.isOccupied() &&
-                    timeNow.isAfter(reservation.getStart().add(0, idleLimit))) {
+                    timeNow.isAfter(reservation.getStart().add(0, maxDelay))) {
                 continue;
             }
 
@@ -207,7 +232,7 @@ public class Library {
                 // If seat not occupied and idle time has passed, the reservation is invalid
                 if (dateNow.equals(date) &&
                         !reservation.isOccupied() &&
-                        timeNow.isAfter(reservation.getStart().add(0, idleLimit))) {
+                        timeNow.isAfter(reservation.getStart().add(0, maxDelay))) {
                     continue;
                 }
 
@@ -253,7 +278,7 @@ public class Library {
             // If seat not occupied and idle time has passed, the reservation is invalid
             if (dateNow.equals(date) &&
                     !reservation.isOccupied() &&
-                    timeNow.isAfter(reservation.getStart().add(0, idleLimit))) {
+                    timeNow.isAfter(reservation.getStart().add(0, maxDelay))) {
                 continue;
             }
 

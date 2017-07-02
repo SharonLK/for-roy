@@ -36,7 +36,7 @@ public class SettingsPersonnelActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setActivityFromOpeningHours(Data.INSTANCE.library.getOpeningHours());
-        ((EditText) findViewById(R.id.idle_limit_edit_text)).setText(String.valueOf(Data.INSTANCE.library.getIdleLimit()));
+        ((EditText) findViewById(R.id.idle_limit_edit_text)).setText(String.valueOf(Data.INSTANCE.library.getMaxDelay()));
     }
 
     @Override
