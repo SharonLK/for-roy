@@ -59,7 +59,7 @@ public class LocationService extends BroadcastReceiver {
     private static JSONObject getJsonForTrack(String username, JSONArray wifiFingerprints) throws JSONException {
         JSONObject jsonParam = new JSONObject();
         jsonParam.put("group", "Bookaseat1");//TODO: change params
-        jsonParam.put("username", username);
+        jsonParam.put("mail", username);
         jsonParam.put("location", "location"); //TODO: why do we need this param?
         jsonParam.put("time", Calendar.getInstance().getTimeInMillis());
         jsonParam.put("wifi-fingerprint", wifiFingerprints);
@@ -88,20 +88,20 @@ public class LocationService extends BroadcastReceiver {
             @Override
             protected Void doInBackground(String... params) {
                 try {
-                    JSONObject res = LocationService.track(context, Data.INSTANCE.username);
+                    JSONObject res = LocationService.track(context, Data.INSTANCE.mail);
 
                     if (res == null || !res.getBoolean("success")) {
                         return null;
                     }
 
                     if (res.getString("location").equals("library")) {
-                        markReservedSeatForUser(Data.INSTANCE.username);
+                        markReservedSeatForUser(Data.INSTANCE.mail);
                     } else {
                         if (Data.INSTANCE.isSitting) {
                             Data.INSTANCE.isSitting = false;
 
                             Calendar now = Calendar.getInstance();
-                            Pair<String, Reservation> reservationPair = Data.INSTANCE.library.reservationByUser(now, Data.INSTANCE.username);
+                            Pair<String, Reservation> reservationPair = Data.INSTANCE.library.reservationByUser(now, Data.INSTANCE.mail);
 
                             if (reservationPair != null && reservationPair.first != null && reservationPair.second != null) {
                                 reservationPair.second.setOccupied(false);
@@ -134,7 +134,7 @@ public class LocationService extends BroadcastReceiver {
                 }
                 return null;
             }
-        }.execute(Data.INSTANCE.username);
+        }.execute(Data.INSTANCE.mail);
     }
 
     private void markReservedSeatForUser(String username) {

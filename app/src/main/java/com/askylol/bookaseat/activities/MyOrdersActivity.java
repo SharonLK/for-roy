@@ -53,7 +53,7 @@ public class MyOrdersActivity extends AppCompatActivity {
                 new TimeOfDay(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)));
 
         if (Data.INSTANCE.library != null) {
-            for (Pair<String, Reservation> dateReservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.username)) {
+            for (Pair<String, Reservation> dateReservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.mail)) {
                 String date = dateReservation.first;
                 Reservation reservation = dateReservation.second;
 

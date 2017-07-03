@@ -9,7 +9,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 public enum Data {
     INSTANCE;
 
-    public String username = null;
+    public String mail = null;
     public Library library = null;
     public GoogleApiClient googleClient;
     public boolean isSitting = true;

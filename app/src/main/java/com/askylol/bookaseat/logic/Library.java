@@ -318,7 +318,7 @@ public class Library {
      * Get a list of all reservations made by the given user. Each reservation is paired with the
      * date it was made for.
      *
-     * @param username username of the user
+     * @param username mail of the user
      * @return list of dates and reservations the user made
      */
     public List<Pair<String, Reservation>> reservationsByUser(String username) {
@@ -344,7 +344,7 @@ public class Library {
      * If there is, returns a pair of seatId and Reservation. Otherwise null.
      *
      * @param selectedDateTime date and time of reservation
-     * @param username         username of the user
+     * @param username         mail of the user
      * @return Pair of seatId and Reservation if user has a reservation, <code>null</code> otherwise
      */
     public Pair<String, Reservation> reservationByUser(Calendar selectedDateTime, String username) {
@@ -412,12 +412,12 @@ public class Library {
     /**
      * Checks whether or not the given user is an admin of this library.
      *
-     * @param username username to check
+     * @param mail mail to check
      * @return <code>true</code> if the user is an admin, <code>false</code> otherwise
      */
-    public boolean isAdmin(String username) {
+    public boolean isAdmin(String mail) {
         for (String s : admins.values()) {
-            if (s.equals(username)) {
+            if (s.equals(mail)) {
                 return true;
             }
         }

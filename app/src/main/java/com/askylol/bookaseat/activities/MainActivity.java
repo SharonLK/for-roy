@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                             c = MyOrdersActivity.class;
                             break;
                         case R.id.nav_settings:
-                            if (Data.INSTANCE.library.isAdmin(Data.INSTANCE.username)) {
+                            if (Data.INSTANCE.library.isAdmin(Data.INSTANCE.mail)) {
                                 c = SettingsPersonnelActivity.class;
                             } else {
                                 c = SettingsActivity.class;
@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
             selectedCalendar.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
             selectedCalendar.set(Calendar.YEAR, Integer.parseInt(date[2]));
 
-            final boolean reservedByUser = (Data.INSTANCE.library.reservationByUser(selectedCalendar, Data.INSTANCE.username) != null);
+            final boolean reservedByUser = (Data.INSTANCE.library.reservationByUser(selectedCalendar, Data.INSTANCE.mail) != null);
             final boolean free = Data.INSTANCE.library.isSeatFree(id, selectedCalendar); // TODO
 
             HotSpot hotSpot = new HotSpot();
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity {
             RelativeLayout relativeLayout = new RelativeLayout(this);
             ImageView logo = new ImageView(this);
 
-            final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedCalendar, Data.INSTANCE.username);
+            final Reservation reservation = Data.INSTANCE.library.reservationByUser(id, selectedCalendar, Data.INSTANCE.mail);
 
             if (reservation != null) {
                 logo.setImageResource(reservation.isOccupied() ?
@@ -351,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
                         reserveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Data.INSTANCE.library.reserve(id, new User(Data.INSTANCE.username), CalendarUtils.getDateString(selectedDateTime), startTime, endTime); // TODO: Update to real user
+                                Data.INSTANCE.library.reserve(id, new User(Data.INSTANCE.mail), CalendarUtils.getDateString(selectedDateTime), startTime, endTime); // TODO: Update to real user
                                 dialog.dismiss();
                             }
                         });

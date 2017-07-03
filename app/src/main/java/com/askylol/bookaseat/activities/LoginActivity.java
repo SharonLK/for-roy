@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
 
-        if (Data.INSTANCE.username != null) {
+        if (Data.INSTANCE.mail != null) {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         }
@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d("HI", "Account email: " + (acct == null? " acct null" : acct.getEmail()));
 
             if (acct != null) {
-                Data.INSTANCE.username = acct.getEmail();
+                Data.INSTANCE.mail = acct.getEmail();
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
             }
@@ -166,7 +166,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void loginClick(View view) {
         EditText username = (EditText) findViewById(R.id.emailEditText);
 
-        Data.INSTANCE.username = username.getText().toString();
+        Data.INSTANCE.mail = username.getText().toString();
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
