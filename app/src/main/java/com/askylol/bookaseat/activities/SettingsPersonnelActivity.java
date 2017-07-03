@@ -32,7 +32,7 @@ public class SettingsPersonnelActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.nav_opening);
+        getSupportActionBar().setTitle(R.string.nav_settings);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setActivityFromOpeningHours(Data.INSTANCE.library.getOpeningHours());

@@ -2,6 +2,7 @@ package com.askylol.bookaseat.activities;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
@@ -154,11 +155,13 @@ public class MainActivity extends AppCompatActivity {
 
                 public void onDrawerClosed(View view) {
                     supportInvalidateOptionsMenu();
+                    navigationView.setCheckedItem(R.id.nav_library);
                     //drawerOpened = false;
                 }
 
                 public void onDrawerOpened(View drawerView) {
                     supportInvalidateOptionsMenu();
+                    navigationView.setCheckedItem(R.id.nav_library);
                     //drawerOpened = true;
                 }
             };
@@ -240,6 +243,26 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setupTimer();
         }
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.server_client_id))
+                .requestEmail()
+                .build();
+        Log.d("HI", "id: " + getString(R.string.server_client_id));
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        // TODO: add something? (YL)
+                        Log.d("HI", "Connection failed... connection result: " + connectionResult);
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        mGoogleApiClient.connect();
+
     }
 
     @Override
@@ -622,7 +645,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTimer() {
-        locationService.onReceive(getApplicationContext(), getIntent());
         trackTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -636,29 +658,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 0, 30000);
-    }
-
-    @Override
-    protected void onStart() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_client_id))
-                .requestEmail()
-                .build();
-        Log.d("HI", "id: " + getString(R.string.server_client_id));
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        // TODO: add something? (YL)
-                        Log.d("HI", "Connection failed... connection result: " + connectionResult);
-                    }
-                })
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-        mGoogleApiClient.connect();
-        super.onStart();
     }
 
     @Override
@@ -693,8 +692,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
         if (intent.hasExtra("notificationStatus")) {
+            ((NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(LocationService.NOTIFICATION_ID);
             switch (intent.getIntExtra("notificationStatus", -1)) {
                 case NOTIFICATION_YES:
                     Log.d("NOTIFICATION", "Pressed YES!");
