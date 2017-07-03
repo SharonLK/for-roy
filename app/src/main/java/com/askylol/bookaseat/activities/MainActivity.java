@@ -2,6 +2,7 @@ package com.askylol.bookaseat.activities;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -259,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         mGoogleApiClient.connect();
-        
+
     }
 
     @Override
@@ -642,7 +643,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTimer() {
-        locationService.onReceive(getApplicationContext(), getIntent());
         trackTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -690,8 +690,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-
         if (intent.hasExtra("notificationStatus")) {
+            ((NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE))
+                    .cancel(LocationService.NOTIFICATION_ID);
             switch (intent.getIntExtra("notificationStatus", -1)) {
                 case NOTIFICATION_YES:
                     Log.d("NOTIFICATION", "Pressed YES!");

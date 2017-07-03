@@ -35,6 +35,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class LocationService extends BroadcastReceiver {
 
     private static final Integer NOTIFICATION_REQUEST_CODE = 123;
+    public static final Integer NOTIFICATION_ID = 0xFF1;
     private static final String baseUrl = "https://ml.internalpositioning.com"; //TODO
 
     static public JSONObject track(Context context, String username) throws JSONException, IOException {
@@ -117,8 +118,8 @@ public class LocationService extends BroadcastReceiver {
                                 openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
 
                                 PendingIntent pIntentKeepSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, keepSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                                PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                                PendingIntent pIntentOpenDialog = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, openDialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 1, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                PendingIntent pIntentOpenDialog = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 2, openDialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                                 Notification notification = new NotificationCompat.Builder(context)
                                         .setSmallIcon(R.drawable.app_icon)
                                         .setContentTitle(context.getString(R.string.notification_title))
@@ -130,9 +131,10 @@ public class LocationService extends BroadcastReceiver {
                                         .build();
                                 notification.defaults |= Notification.DEFAULT_SOUND;
                                 notification.defaults |= Notification.DEFAULT_VIBRATE;
+                                notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
                                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-                                notificationManager.notify(0xFFFF, notification);
+                                notificationManager.notify(NOTIFICATION_ID, notification);
                             }
                         }
                     }
