@@ -22,6 +22,7 @@ public class Library {
     private OpeningHours openingHours = new OpeningHours();
     private Map<String, Map<String, Map<String, Reservation>>> reservations = new HashMap<>();
     private DatabaseReference libraryRef;
+    private Map<String, String> admins = new HashMap<>();
     private int maxDelay;
     private int idleLimit;
 
@@ -415,7 +416,60 @@ public class Library {
      * @return <code>true</code> if the user is an admin, <code>false</code> otherwise
      */
     public boolean isAdmin(String username) {
-        return username.equals(""); // TODO
+        for (String s : admins.values()) {
+            if (s.equals(username)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add a new admin to the list of admin of the library and update the database accordingly.
+     *
+     * @param mail mail of the admin to add
+     */
+    public void addAdmin(final String mail) {
+        if (libraryRef == null) {
+            throw new IllegalStateException("No reference to library on db");
+        }
+
+        libraryRef.getDatabase()
+                .getReference(String.format("libraries/%s/admins", libraryRef.getKey()))
+                .push()
+                .setValue(mail);
+    }
+
+    /**
+     * Remove an admin from the library, and update the database accordingly.
+     *
+     * @param mail mail of the admin to remove
+     */
+    public void removeAdmin(final String mail) {
+        if (libraryRef == null) {
+            throw new IllegalStateException("No reference to library on db");
+        }
+
+        libraryRef.getDatabase()
+                .getReference(String.format("libraries/%s/admins", libraryRef.getKey()))
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Map<String, String> adminsMap = (Map<String, String>) dataSnapshot.getValue();
+
+                        for (Map.Entry<String, String> entry : adminsMap.entrySet()) {
+                            if (entry.getValue().equals(mail)) {
+                                dataSnapshot.getRef().child(entry.getKey()).removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     public void updateReservation(String seatId, final Reservation reservation) {
