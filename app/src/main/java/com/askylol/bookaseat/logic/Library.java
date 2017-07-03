@@ -20,7 +20,6 @@ import java.util.Map;
 public class Library {
     private Map<String, Seat> idToSeat = new HashMap<>();
     private OpeningHours openingHours = new OpeningHours();
-    private Map<String, User> users = new HashMap<>();
     private Map<String, Map<String, Map<String, Reservation>>> reservations = new HashMap<>();
     private DatabaseReference libraryRef;
     private int maxDelay;
@@ -155,10 +154,6 @@ public class Library {
         return new ArrayList<>(idToSeat.values());
     }
 
-    public Map<String, User> getUsers() {
-        return users;
-    }
-
     public Map<String, Map<String, Map<String, Reservation>>> getReservations() {
         return reservations;
     }
@@ -193,9 +188,18 @@ public class Library {
 
         for (Reservation reservation : reservations.get(seatId).get(date).values()) {
             // If seat not occupied and idle time has passed, the reservation is invalid
-            if (dateNow.equals(date) &&
+            if (reservation.getLastSeen() == null &&
+                    dateNow.equals(date) &&
                     !reservation.isOccupied() &&
                     timeNow.isAfter(reservation.getStart().add(0, maxDelay))) {
+                continue;
+            }
+
+            // If user has been outside the library for too long, the reservation is invalid
+            if (reservation.getLastSeen() != null &&
+                    dateNow.equals(date) &&
+                    !reservation.isOccupied() &&
+                    timeNow.isAfter(reservation.getLastSeen().add(0, idleLimit))) {
                 continue;
             }
 
@@ -230,9 +234,18 @@ public class Library {
                 }
 
                 // If seat not occupied and idle time has passed, the reservation is invalid
-                if (dateNow.equals(date) &&
+                if (reservation.getLastSeen() == null &&
+                        dateNow.equals(date) &&
                         !reservation.isOccupied() &&
                         timeNow.isAfter(reservation.getStart().add(0, maxDelay))) {
+                    continue;
+                }
+
+                // If user has been outside the library for too long, the reservation is invalid
+                if (reservation.getLastSeen() != null &&
+                        dateNow.equals(date) &&
+                        !reservation.isOccupied() &&
+                        timeNow.isAfter(reservation.getLastSeen().add(0, idleLimit))) {
                     continue;
                 }
 
@@ -276,9 +289,18 @@ public class Library {
             TimeOfDay timeNow = CalendarUtils.getTimeOfDay(now);
 
             // If seat not occupied and idle time has passed, the reservation is invalid
-            if (dateNow.equals(date) &&
+            if (reservation.getLastSeen() == null &&
+                    dateNow.equals(date) &&
                     !reservation.isOccupied() &&
                     timeNow.isAfter(reservation.getStart().add(0, maxDelay))) {
+                continue;
+            }
+
+            // If user has been outside the library for too long, the reservation is invalid
+            if (reservation.getLastSeen() != null &&
+                    dateNow.equals(date) &&
+                    !reservation.isOccupied() &&
+                    timeNow.isAfter(reservation.getLastSeen().add(0, idleLimit))) {
                 continue;
             }
 
