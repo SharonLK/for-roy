@@ -59,4 +59,6 @@
     <string name="notification_content">לשמירת מושבך, חזור לספריה ב- 10 הדקות הבאות</string>
     <string name="no">לא</string>
     <string name="history">היסטוריה</string>
+    <string name="idle_time_limit">זמן התבטלות מקסימלי:</string>
+    <string name="max_delay_limit">איחור מקסימלי:</string>
 </resources>
