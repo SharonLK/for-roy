@@ -64,11 +64,25 @@
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray" />
 
+            <TextView
+                android:id="@+id/warning_message_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/warning_message"
+                android:textAlignment="center"
+                android:textColor="@android:color/holo_red_dark"
+                android:visibility="gone" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
+
             <com.qozix.tileview.TileView
                 android:id="@+id/tile_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_blue_pattern"/>
+                android:background="@drawable/bg_blue_pattern" />
 
         </LinearLayout>
     </LinearLayout>

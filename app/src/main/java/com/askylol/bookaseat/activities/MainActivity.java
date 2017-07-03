@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
     private BroadcastReceiver locationService = new LocationService();
+    private BroadcastReceiver wifiReceiver = new WifiBroadcastReceiver();
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -223,6 +224,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
+        WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        findViewById(R.id.warning_message_text_view).setVisibility(wifi.isWifiEnabled() ? View.GONE : View.VISIBLE);
 
         //TODO: do we need to check for other permissions?
         if (ContextCompat.checkSelfPermission(
@@ -665,6 +669,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+
         ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
     }
 
@@ -679,5 +685,13 @@ public class MainActivity extends AppCompatActivity {
 
         Data.INSTANCE.mail = null;
         startActivity(new Intent(this, LoginActivity.class));
+    }
+
+    public class WifiBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            MainActivity.this.findViewById(R.id.warning_message_text_view).setVisibility(wifi.isWifiEnabled() ? View.GONE : View.VISIBLE);
+        }
     }
 }
