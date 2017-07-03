@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.utils.Data;
@@ -23,13 +22,11 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.security.ProviderInstaller;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private GoogleApiClient mGoogleApiClient;
-    private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
 
     private static final int RC_SIGN_IN = 9001;
@@ -70,10 +67,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-//        findViewById(R.id.sign_out_button).setOnClickListener(this);
-//        findViewById(R.id.disconnect_button).setOnClickListener(this);
-
-//        signIn();
 
     }
 
@@ -116,7 +109,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-//            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             Log.d("HI", "Account email: " + (acct == null? " acct null" : acct.getEmail()));
 
             if (acct != null) {
@@ -125,7 +117,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 finish();
             }
 
-//            mStatusTextView.setText("WHATEVER");
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
@@ -137,8 +128,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
         } else {
-//            mStatusTextView.setText(R.string.signed_out);
-//            mStatusTextView.setText("SIGNED OUT");
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }
@@ -147,7 +136,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
-//            mProgressDialog.setMessage(getString(R.string.loading));
             mProgressDialog.setMessage("LOADING");
             mProgressDialog.setIndeterminate(true);
         }
@@ -175,12 +163,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.sign_in_button:
                 signIn();
                 break;
-            case R.id.sign_out_button:
-                signOut();
-                break;
-            case R.id.disconnect_button:
-                revokeAccess();
-                break;
         }
     }
 
@@ -189,26 +171,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        updateUI(false);
-                    }
-                });
-    }
-
-
-    private void revokeAccess() {
-        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        updateUI(false);
-                    }
-                });
-    }
+//    private void revokeAccess() {
+//        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+//                new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(Status status) {
+//                        updateUI(false);
+//                    }
+//                });
+//    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

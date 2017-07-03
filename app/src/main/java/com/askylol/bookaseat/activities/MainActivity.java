@@ -669,6 +669,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        trackTimer.cancel();
         Data.INSTANCE.mail = null;
         startActivity(new Intent(this, LoginActivity.class));
     }
