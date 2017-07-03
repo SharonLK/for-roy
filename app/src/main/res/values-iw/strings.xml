@@ -58,4 +58,5 @@
     <string name="notification_title">עזבת את הספריה</string>
     <string name="notification_content">לשמירת מושבך, חזור לספריה ב- 10 הדקות הבאות</string>
     <string name="no">לא</string>
+    <string name="history">היסטוריה</string>
 </resources>

@@ -59,4 +59,5 @@
     <string name="notification_title">You are leaving the library</string>
     <string name="notification_content">Return in the next 10 minutes to keep your seat</string>
     <string name="no">No</string>
+    <string name="history">History</string>
 </resources>

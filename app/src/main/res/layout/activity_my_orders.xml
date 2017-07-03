@@ -26,14 +26,13 @@
             android:id="@+id/history_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="History"
-            android:onClick="onHistoryButtonClicked"/>
+            android:onClick="onHistoryButtonClicked"
+            android:text="@string/history" />
 
         <ListView
             android:id="@+id/history_list"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 </LinearLayout>
