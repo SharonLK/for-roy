@@ -119,6 +119,11 @@ public class MainActivity extends AppCompatActivity {
                 tileView.addDetailLevel(1.0f, "tile-%d_%d.png", 256, 256);
                 libraryChangedListener.onDataChange(dataSnapshot);
                 libraryRef.addValueEventListener(libraryChangedListener);
+
+                if (Data.INSTANCE.library.isAdmin(Data.INSTANCE.mail)) {
+                    ((NavigationView) findViewById(R.id.nav_view)).getMenu().clear();
+                    ((NavigationView) findViewById(R.id.nav_view)).inflateMenu(R.menu.activity_admin_drawer);
+                }
             }
 
             @Override
@@ -178,6 +183,9 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 c = SettingsActivity.class;
                             }
+                            break;
+                        case R.id.nav_admin_management:
+                            c = AdminManagementActivity.class;
                             break;
                         default:
                             c = null;

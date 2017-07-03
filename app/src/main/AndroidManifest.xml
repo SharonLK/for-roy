@@ -26,6 +26,7 @@
         <activity android:name=".activities.AboutActivity" android:parentActivityName=".activities.MainActivity"/>
         <activity android:name=".activities.MainActivity" />
         <activity android:name=".activities.SettingsActivity" android:parentActivityName=".activities.MainActivity"/>
+        <activity android:name=".activities.AdminManagementActivity" android:parentActivityName=".activities.MainActivity"/>
     </application>
 
 </manifest>
