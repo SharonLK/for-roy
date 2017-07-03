@@ -35,7 +35,7 @@
             android:title="@string/nav_about_us" />
         <item
             android:id="@+id/nav_admin_management"
-            android:icon="@drawable/ic_info_black_24dp"
+            android:icon="@drawable/ic_supervisor_account_black_24dp"
             android:title="@string/nav_admin_management" />
     </group>
 
