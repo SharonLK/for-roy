@@ -18,6 +18,13 @@ import android.widget.TextView;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.utils.Data;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by Sharon on 03-Jul-17.
@@ -37,10 +44,27 @@ public class AdminManagementActivity extends AppCompatActivity {
         AdminsAdapter adminsAdapter = new AdminsAdapter(this, R.layout.view_admin);
         adminsListView.setAdapter(adminsAdapter);
 
+        updateAdapter(Data.INSTANCE.library.getAdmins().values());
+
         if (Data.INSTANCE.library != null) {
-            for (String s : Data.INSTANCE.library.getAdmins().values()) {
-                adminsAdapter.add(s);
-            }
+            Data.INSTANCE.library.getLibraryRef()
+                    .getDatabase()
+                    .getReference(String.format("libraries/%s/admins", Data.INSTANCE.library.getLibraryRef().getKey()))
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.getValue() != null) {
+                                updateAdapter(((Map<String, String>) dataSnapshot.getValue()).values());
+                            } else {
+                                updateAdapter(new ArrayList<String>());
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
         }
 
         ((Button) findViewById(R.id.add_new_admin_button)).setOnClickListener(new View.OnClickListener() {
@@ -49,6 +73,18 @@ public class AdminManagementActivity extends AppCompatActivity {
                 Data.INSTANCE.library.addAdmin(((EditText) findViewById(R.id.new_admin_mail_edit_text)).getText().toString());
             }
         });
+    }
+
+    private void updateAdapter(Collection<String> admins) {
+        AdminsAdapter adminsAdapter = (AdminsAdapter) ((ListView) findViewById(R.id.admins_list)).getAdapter();
+
+        if (adminsAdapter != null) {
+            adminsAdapter.clear();
+
+            for (String s : admins) {
+                adminsAdapter.add(s);
+            }
+        }
     }
 
     private class AdminsAdapter extends ArrayAdapter<String> {

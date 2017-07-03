@@ -34,6 +34,7 @@
                 android:id="@+id/new_admin_mail_edit_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:hint="@string/new_admin_s_mail" />
 

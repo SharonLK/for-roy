@@ -387,6 +387,10 @@ public class Library {
         return idToSeat.get(id);
     }
 
+    public DatabaseReference getLibraryRef() {
+        return libraryRef;
+    }
+
     public void setLibraryRef(DatabaseReference libraryRef) {
         this.libraryRef = libraryRef;
     }
