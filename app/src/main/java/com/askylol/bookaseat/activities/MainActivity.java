@@ -240,6 +240,26 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setupTimer();
         }
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.server_client_id))
+                .requestEmail()
+                .build();
+        Log.d("HI", "id: " + getString(R.string.server_client_id));
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        // TODO: add something? (YL)
+                        Log.d("HI", "Connection failed... connection result: " + connectionResult);
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        mGoogleApiClient.connect();
+        
     }
 
     @Override
@@ -636,29 +656,6 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }, 0, 30000);
-    }
-
-    @Override
-    protected void onStart() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_client_id))
-                .requestEmail()
-                .build();
-        Log.d("HI", "id: " + getString(R.string.server_client_id));
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        // TODO: add something? (YL)
-                        Log.d("HI", "Connection failed... connection result: " + connectionResult);
-                    }
-                })
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-        mGoogleApiClient.connect();
-        super.onStart();
     }
 
     @Override
