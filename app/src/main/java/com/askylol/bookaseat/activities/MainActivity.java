@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String SELECTED_DATE_TIME_KEY = "selectedDateTimeKey";
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 2247;
+    public static final int NOTIFICATION_CLICK = 0, NOTIFICATION_YES = 1, NOTIFICATION_NO = 2;
     private ActionBarDrawerToggle mDrawerToggle;
     private TileView tileView;
 
@@ -621,6 +622,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTimer() {
+        locationService.onReceive(getApplicationContext(), getIntent());
         trackTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -683,8 +685,30 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        trackTimer.cancel();
         Data.INSTANCE.mail = null;
         startActivity(new Intent(this, LoginActivity.class));
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        if (intent.hasExtra("notificationStatus")) {
+            switch (intent.getIntExtra("notificationStatus", -1)) {
+                case NOTIFICATION_YES:
+                    Log.d("NOTIFICATION", "Pressed YES!");
+                    break;
+                case NOTIFICATION_NO:
+                    Log.d("NOTIFICATION", "Pressed NO :(");
+                    break;
+                case NOTIFICATION_CLICK:
+                    Log.d("NOTIFICATION", "Clicked on notification!");
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public class WifiBroadcastReceiver extends BroadcastReceiver {
