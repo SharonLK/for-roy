@@ -34,6 +34,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class LocationService extends BroadcastReceiver {
 
+    private static final Integer NOTIFICATION_REQUEST_CODE = 123;
     private static final String baseUrl = "https://ml.internalpositioning.com"; //TODO
 
     static public JSONObject track(Context context, String username) throws JSONException, IOException {
@@ -108,18 +109,24 @@ public class LocationService extends BroadcastReceiver {
                                 reservationPair.second.setLastSeen(CalendarUtils.getTimeOfDay(now));
                                 Data.INSTANCE.library.updateReservation(reservationPair.first, reservationPair.second);
 
-                                Intent notificationIntent = new Intent(context, MainActivity.class);
-                                PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+                                Intent keepSeatIntent = new Intent(context, MainActivity.class);
+                                keepSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_YES);
+                                Intent freeSeatIntent = new Intent(context, MainActivity.class);
+                                freeSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_NO);
+                                Intent openDialogIntent = new Intent(context, MainActivity.class);
+                                openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
 
-                                PendingIntent pIntent = PendingIntent.getActivity(context, 123, new Intent(context, MainActivity.class), 0);
+                                PendingIntent pIntentKeepSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, keepSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                PendingIntent pIntentOpenDialog = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, openDialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                                 Notification notification = new NotificationCompat.Builder(context)
                                         .setSmallIcon(R.drawable.app_icon)
                                         .setContentTitle(context.getString(R.string.notification_title))
                                         .setContentText(context.getString(R.string.notification_content))
-                                        .setContentIntent(intent)
+                                        .setContentIntent(pIntentOpenDialog)
                                         .setAutoCancel(true)
-                                        .addAction(R.drawable.ic_done_black_24dp, context.getString(R.string.yes), pIntent)
-                                        .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.no), pIntent)
+                                        .addAction(R.drawable.ic_done_black_24dp, context.getString(R.string.yes), pIntentKeepSeat)
+                                        .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.no), pIntentFreeSeat)
                                         .build();
                                 notification.defaults |= Notification.DEFAULT_SOUND;
                                 notification.defaults |= Notification.DEFAULT_VIBRATE;
