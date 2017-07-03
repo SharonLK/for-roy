@@ -36,7 +36,8 @@ public class SettingsPersonnelActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         setActivityFromOpeningHours(Data.INSTANCE.library.getOpeningHours());
-        ((EditText) findViewById(R.id.idle_limit_edit_text)).setText(String.valueOf(Data.INSTANCE.library.getMaxDelay()));
+        ((EditText) findViewById(R.id.max_delay_edit_text)).setText(String.valueOf(Data.INSTANCE.library.getMaxDelay()));
+        ((EditText) findViewById(R.id.idle_limit_edit_text)).setText(String.valueOf(Data.INSTANCE.library.getIdleLimit()));
     }
 
     @Override
@@ -51,11 +52,14 @@ public class SettingsPersonnelActivity extends AppCompatActivity {
 
     public void updateButtonOnClick(View view) {
         Data.INSTANCE.library.updateOpeningHours(openingHoursFromActivity());
+        Data.INSTANCE.library.updateMaxDelay(Integer.parseInt(((EditText) findViewById(R.id.max_delay_edit_text)).getText().toString()));
         Data.INSTANCE.library.updateIdleLimit(Integer.parseInt(((EditText) findViewById(R.id.idle_limit_edit_text)).getText().toString()));
     }
 
     public void revertButtonOnClick(View view) {
         setActivityFromOpeningHours(Data.INSTANCE.library.getOpeningHours());
+        ((EditText) findViewById(R.id.max_delay_edit_text)).setText(String.valueOf(Data.INSTANCE.library.getMaxDelay()));
+        ((EditText) findViewById(R.id.idle_limit_edit_text)).setText(String.valueOf(Data.INSTANCE.library.getIdleLimit()));
     }
 
     private Map<OpeningHours.Day, CheckBox> getDayCheckBoxMap() {
