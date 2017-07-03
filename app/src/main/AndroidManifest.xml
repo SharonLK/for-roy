@@ -19,24 +19,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.MyOrdersActivity"
-            android:parentActivityName=".activities.MainActivity" />
-        <activity
-            android:name=".activities.OpeningHoursActivity"
-            android:parentActivityName=".activities.MainActivity" />
+        <activity android:name=".activities.MyOrdersActivity" android:parentActivityName=".activities.MainActivity"/>
+        <activity android:name=".activities.OpeningHoursActivity" android:parentActivityName=".activities.MainActivity"/>
         <activity
             android:name=".activities.SettingsPersonnelActivity"
             android:parentActivityName=".activities.MainActivity" />
-        <activity
-            android:name=".activities.AboutActivity"
-            android:parentActivityName=".activities.MainActivity" />
-        <activity
-            android:name=".activities.MainActivity"
-            android:launchMode="singleTask" />
-        <activity
-            android:name=".activities.SettingsActivity"
-            android:parentActivityName=".activities.MainActivity" />
+        <activity android:name=".activities.AboutActivity" android:parentActivityName=".activities.MainActivity" />
+        <activity android:name=".activities.MainActivity" android:launchMode="singleTask" />
+        <activity android:name=".activities.SettingsActivity" android:parentActivityName=".activities.MainActivity" />
+        <activity android:name=".activities.AdminManagementActivity" android:parentActivityName=".activities.MainActivity" />
     </application>
 
 </manifest>

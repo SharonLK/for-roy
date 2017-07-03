@@ -48,6 +48,9 @@ import com.askylol.bookaseat.utils.Pair;
 import com.askylol.bookaseat.utils.Point;
 import com.askylol.bookaseat.utils.TimeOfDay;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.database.DataSnapshot;
@@ -95,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
     };
     private BroadcastReceiver locationService = new LocationService();
 
+    private GoogleApiClient mGoogleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +126,11 @@ public class MainActivity extends AppCompatActivity {
                 tileView.addDetailLevel(1.0f, "tile-%d_%d.png", 256, 256);
                 libraryChangedListener.onDataChange(dataSnapshot);
                 libraryRef.addValueEventListener(libraryChangedListener);
+
+                if (Data.INSTANCE.library.isAdmin(Data.INSTANCE.mail)) {
+                    ((NavigationView) findViewById(R.id.nav_view)).getMenu().clear();
+                    ((NavigationView) findViewById(R.id.nav_view)).inflateMenu(R.menu.activity_admin_drawer);
+                }
             }
 
             @Override
@@ -180,6 +190,9 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 c = SettingsActivity.class;
                             }
+                            break;
+                        case R.id.nav_admin_management:
+                            c = AdminManagementActivity.class;
                             break;
                         default:
                             c = null;
@@ -622,6 +635,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.server_client_id))
+                .requestEmail()
+                .build();
+        Log.d("HI", "id: " + getString(R.string.server_client_id));
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        // TODO: add something? (YL)
+                        Log.d("HI", "Connection failed... connection result: " + connectionResult);
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
     protected void onPause() {
         unregisterReceiver(locationService);
         super.onPause();
@@ -635,14 +671,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signOut() {
-        Auth.GoogleSignInApi.signOut(Data.INSTANCE.googleClient).setResultCallback(
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                        startActivity(intent);
+                        Log.d("HI", "status: " + status);
                     }
                 });
+
+        trackTimer.cancel();
+        Data.INSTANCE.mail = null;
+        startActivity(new Intent(this, LoginActivity.class));
     }
 
     @Override
