@@ -410,6 +410,22 @@ public class Library {
     }
 
     /**
+     * @return a mapping from keys to admin mails
+     */
+    public Map<String, String> getAdmins() {
+        return admins;
+    }
+
+    /**
+     * Sets a new mapping from keys to admin mails.
+     *
+     * @param admins new mapping from keys to admin mails
+     */
+    public void setAdmins(Map<String, String> admins) {
+        this.admins = admins;
+    }
+
+    /**
      * Checks whether or not the given user is an admin of this library.
      *
      * @param mail mail to check
