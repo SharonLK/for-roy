@@ -63,4 +63,6 @@
     <string name="max_delay_limit">איחור מקסימלי:</string>
     <string name="remove">מחק</string>
     <string name="nav_admin_management">ניהול אדמינים</string>
+    <string name="add">הוסף</string>
+    <string name="new_admin_s_mail">אימייל של האדמין</string>
 </resources>

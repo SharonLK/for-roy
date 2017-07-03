@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -40,6 +42,13 @@ public class AdminManagementActivity extends AppCompatActivity {
                 adminsAdapter.add(s);
             }
         }
+
+        ((Button) findViewById(R.id.add_new_admin_button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Data.INSTANCE.library.addAdmin(((EditText) findViewById(R.id.new_admin_mail_edit_text)).getText().toString());
+            }
+        });
     }
 
     private class AdminsAdapter extends ArrayAdapter<String> {

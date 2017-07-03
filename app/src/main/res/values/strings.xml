@@ -63,4 +63,6 @@
     <string name="history">History</string>
     <string name="remove">Remove</string>
     <string name="nav_admin_management">Admin Management</string>
+    <string name="add">Add</string>
+    <string name="new_admin_s_mail">new admin\'s mail</string>
 </resources>
