@@ -127,9 +127,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void updateUI(boolean signedIn) {
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            findViewById(R.id.sign_in_label).setVisibility(View.GONE);
         } else {
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.sign_in_label).setVisibility(View.VISIBLE);
         }
     }
 

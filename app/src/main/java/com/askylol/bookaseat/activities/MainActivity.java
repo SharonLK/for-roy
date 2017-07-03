@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
@@ -155,11 +155,13 @@ public class MainActivity extends AppCompatActivity {
 
                 public void onDrawerClosed(View view) {
                     supportInvalidateOptionsMenu();
+                    navigationView.setCheckedItem(R.id.nav_library);
                     //drawerOpened = false;
                 }
 
                 public void onDrawerOpened(View drawerView) {
                     supportInvalidateOptionsMenu();
+                    navigationView.setCheckedItem(R.id.nav_library);
                     //drawerOpened = true;
                 }
             };
