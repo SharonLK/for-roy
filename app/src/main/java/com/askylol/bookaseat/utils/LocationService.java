@@ -126,6 +126,7 @@ public class LocationService extends BroadcastReceiver {
                                         .setContentText(context.getString(R.string.notification_content))
                                         .setContentIntent(pIntentOpenDialog)
                                         .setAutoCancel(true)
+                                        .setOngoing(true)
                                         .addAction(R.drawable.ic_done_black_24dp, context.getString(R.string.yes), pIntentKeepSeat)
                                         .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.no), pIntentFreeSeat)
                                         .build();
