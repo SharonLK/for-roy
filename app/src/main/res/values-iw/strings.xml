@@ -66,4 +66,5 @@
     <string name="add">הוסף</string>
     <string name="new_admin_s_mail">אימייל של האדמין</string>
     <string name="current_library_admins">אדמינים במערכת:</string>
+    <string name="minutes">דקות</string>
 </resources>

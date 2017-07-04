@@ -67,4 +67,5 @@
     <string name="new_admin_s_mail">new admin\'s mail</string>
     <string name="current_library_admins">Current library admins:</string>
     <string name="warning_message">For automatic location detection, turn on Wifi</string>
+    <string name="minutes">minutes</string>
 </resources>
