@@ -659,7 +659,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-        }, 0, 30000);
+        }, 0, 10000);
     }
 
     @Override

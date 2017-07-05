@@ -9,7 +9,9 @@ import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import com.askylol.bookaseat.R;
 import com.askylol.bookaseat.activities.MainActivity;
@@ -97,8 +99,14 @@ public class LocationService extends BroadcastReceiver {
                     }
 
                     if (res.getString("location").equals("library")) {
+                        if (!Data.INSTANCE.isInLibrary) {
+                            ((Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(300);
+                            Toast.makeText(context, R.string.in_library_message, Toast.LENGTH_LONG).show();
+                            Data.INSTANCE.isInLibrary = true;
+                        }
                         markReservedSeatForUser(Data.INSTANCE.mail);
                     } else {
+                        Data.INSTANCE.isInLibrary = false;
                         if (Data.INSTANCE.isSitting) {
                             Data.INSTANCE.isSitting = false;
 
@@ -157,8 +165,9 @@ public class LocationService extends BroadcastReceiver {
         Pair<String, Reservation> reservationPair = library.reservationByUser(currentTime, username);
         String seatId = reservationPair.first;
         Reservation reservation = reservationPair.second;
-        if (reservation != null &&
+        if (reservation != null && !reservation.isOccupied() &&
                 reservation.getStart().add(library.getMaxDelay()).isAfter(CalendarUtils.getTimeOfDay(currentTime))) {
+            Data.INSTANCE.isSitting = true;
             reservation.setOccupied(true);
             library.updateReservation(seatId, reservation);
         }

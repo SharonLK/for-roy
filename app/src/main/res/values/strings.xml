@@ -72,4 +72,5 @@
     <string name="dismiss">DISMISS</string>
     <string name="seat_freed">The seat has been freed</string>
     <string name="reservation_expired">Reservation expired</string>
+    <string name="in_library_message">You are in the library!</string>
 </resources>

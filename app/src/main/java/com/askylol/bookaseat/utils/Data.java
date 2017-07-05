@@ -13,4 +13,5 @@ public enum Data {
     public Library library = null;
     public GoogleApiClient googleClient;
     public boolean isSitting = true;
+    public boolean isInLibrary = false;
 }
