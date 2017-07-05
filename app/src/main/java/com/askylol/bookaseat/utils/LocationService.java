@@ -114,6 +114,8 @@ public class LocationService extends BroadcastReceiver {
                     if (res.getString("location").equals("library")) {
                         if (!Data.INSTANCE.isInLibrary) {
                             Data.INSTANCE.isInLibrary = true;
+                            ((NotificationManager) context.getSystemService(NOTIFICATION_SERVICE))
+                                    .cancel(LocationService.NOTIFICATION_ID);
                             showToast = true;
                         }
                         markReservedSeatForUser(Data.INSTANCE.mail);
