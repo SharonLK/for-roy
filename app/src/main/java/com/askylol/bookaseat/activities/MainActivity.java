@@ -698,47 +698,69 @@ public class MainActivity extends AppCompatActivity {
             ((NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE))
                     .cancel(LocationService.NOTIFICATION_ID);
             Library library = Data.INSTANCE.library;
-            Calendar now = Calendar.getInstance();
+            final Calendar now = Calendar.getInstance();
             Pair<String, Reservation> reservationPair = library.reservationByUser(now, Data.INSTANCE.mail);
-            if (reservationPair == null)
+            if (reservationPair == null) {
+                getDismissableSnackbar(getString(R.string.reservation_expired));
                 return;
+            }
 
-            String seatId = reservationPair.first;
-            Reservation reservation = reservationPair.second;
+            final String seatId = reservationPair.first;
+            final Reservation reservation = reservationPair.second;
 
             switch (intent.getIntExtra("notificationStatus", -1)) {
                 case NOTIFICATION_YES:
-                    Snackbar.make(
-                            findViewById(android.R.id.content),
-                            String.format(getString(R.string.reserved_for_x_minutes), library.getIdleLimit()),
-                            Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.dismiss), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                }
-                            })
-                            .show();
+                    showReservedSnackbar();
                     break;
                 case NOTIFICATION_NO:
-                    Data.INSTANCE.library.removeReservation(seatId, CalendarUtils.getDateString(now), reservation);
-                    Snackbar.make(
-                            findViewById(android.R.id.content),
-                            getString(R.string.seat_freed),
-                            Snackbar.LENGTH_INDEFINITE)
-                            .setAction(getString(R.string.dismiss), new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                }
-                            })
-                            .show();
+                    Data.INSTANCE.library.removeReservation(seatId, CalendarUtils.getDateString(now), reservation); //TODO: check me
+                    showFreedSnackbar();
                     break;
                 case NOTIFICATION_CLICK:
-                    Log.d("NOTIFICATION", "Clicked on notification!"); //TODO
+                    AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                            .setTitle(R.string.notification_title)
+                            .setMessage(R.string.notification_content)
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    showReservedSnackbar();
+                                }
+                            })
+                            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Data.INSTANCE.library.removeReservation(seatId, CalendarUtils.getDateString(now), reservation); //TODO: check me
+                                    showFreedSnackbar();
+                                }
+                            })
+                            .create();
+
+                    dialog.show();
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private Snackbar getDismissableSnackbar(String content) {
+        return Snackbar.make(
+                findViewById(android.R.id.content),
+                content,
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction(getString(R.string.dismiss), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    }
+                });
+    }
+
+    private void showFreedSnackbar() {
+        getDismissableSnackbar(getString(R.string.seat_freed)).show();
+    }
+
+    private void showReservedSnackbar() {
+        getDismissableSnackbar(getString(R.string.reserved_for_x_minutes)).show();
     }
 
     public class WifiBroadcastReceiver extends BroadcastReceiver {

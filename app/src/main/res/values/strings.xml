@@ -58,7 +58,7 @@
     <string name="please_sign_in">Please sign in to proceed:</string>
     <string name="nav_log_out">Log out</string>
     <string name="notification_title">You are leaving the library</string>
-    <string name="notification_content">Return in the next 10 minutes to keep your seat</string>
+    <string name="notification_content">Do you wish to keep your seat?</string>
     <string name="no">No</string>
     <string name="history">History</string>
     <string name="remove">Remove</string>
@@ -71,4 +71,5 @@
     <string name="reserved_for_x_minutes" formatted="false">Seat is reserved for the next %d minutes</string>
     <string name="dismiss">DISMISS</string>
     <string name="seat_freed">The seat has been freed</string>
+    <string name="reservation_expired">Reservation expired</string>
 </resources>
