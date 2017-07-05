@@ -135,12 +135,18 @@ public class LocationService extends BroadcastReceiver {
                             reservation.setLastSeen(CalendarUtils.getTimeOfDay(now));
                             Data.INSTANCE.library.updateReservation(seatId, reservation);
 
+                            Intent openDialogIntent = new Intent(context, MainActivity.class);
+                            openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
+
+                            if (Data.INSTANCE.isInForground) {
+                                context.startActivity(openDialogIntent);
+                                return null;
+                            }
+
                             Intent keepSeatIntent = new Intent(context, MainActivity.class);
                             keepSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_YES);
                             Intent freeSeatIntent = new Intent(context, MainActivity.class);
                             freeSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_NO);
-                            Intent openDialogIntent = new Intent(context, MainActivity.class);
-                            openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
 
                             PendingIntent pIntentKeepSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, keepSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                             PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 1, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
