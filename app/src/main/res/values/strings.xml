@@ -58,7 +58,8 @@
     <string name="please_sign_in">Please sign in to proceed:</string>
     <string name="nav_log_out">Log out</string>
     <string name="notification_title">You are leaving the library</string>
-    <string name="notification_content">Do you wish to keep your seat?</string>
+    <string name="notification_content" formatted="false">Do you wish to keep your seat?\nTime left: %d minutes and %d seconds</string>
+    <string name="notification_content_short">Do you wish to keep your seat?</string>
     <string name="no">No</string>
     <string name="history">History</string>
     <string name="remove">Remove</string>

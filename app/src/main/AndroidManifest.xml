@@ -42,6 +42,12 @@
         <activity
             android:name=".activities.AdminManagementActivity"
             android:parentActivityName=".activities.MainActivity" />
+
+        <receiver android:name=".utils.LocationService">
+            <intent-filter>
+                <action android:name="android.net.wifi.SCAN_RESULTS" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

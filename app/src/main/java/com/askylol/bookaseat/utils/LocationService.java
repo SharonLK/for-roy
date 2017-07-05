@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
@@ -38,7 +39,9 @@ public class LocationService extends BroadcastReceiver {
 
     private static final Integer NOTIFICATION_REQUEST_CODE = 123;
     public static final Integer NOTIFICATION_ID = 0xFF1;
-    private static final String baseUrl = "https://ml.internalpositioning.com"; //TODO
+    private static final String baseUrl = "https://ml.internalpositioning.com";
+
+    private static CountDownTimer timer = null;
 
     static public JSONObject track(Context context, String username) throws JSONException, IOException {
         final MediaType JSON
@@ -90,6 +93,7 @@ public class LocationService extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         new AsyncTask<String, Void, Void>() {
             boolean showToast = false;
+            boolean showCountdownNotification = false;
 
             @Override
             protected void onPostExecute(Void aVoid) {
@@ -100,6 +104,18 @@ public class LocationService extends BroadcastReceiver {
                     Toast.makeText(context, R.string.in_library_message, Toast.LENGTH_LONG).show();
                 }
                 showToast = false;
+
+                if (showCountdownNotification && Data.INSTANCE.library != null) {
+                    if (timer != null) {
+                        timer.cancel();
+                    }
+
+                    timer = new Timer(Data.INSTANCE.library.getMaxDelay() * 60 * 1000, 1000, context);
+                    timer.start();
+
+                    Data.INSTANCE.isSitting = false;
+                }
+                showCountdownNotification = false;
             }
 
             @Override
@@ -122,11 +138,16 @@ public class LocationService extends BroadcastReceiver {
                         if (Data.INSTANCE.isSitting) {
                             Data.INSTANCE.isSitting = false;
 
+                            if (Data.INSTANCE.library == null) {
+                                return null;
+                            }
+
                             Calendar now = Calendar.getInstance();
                             Pair<String, Reservation> reservationPair = Data.INSTANCE.library.reservationByUser(now, Data.INSTANCE.mail);
 
-                            if (reservationPair == null || reservationPair.first == null || reservationPair.second == null)
+                            if (reservationPair == null || reservationPair.first == null || reservationPair.second == null) {
                                 return null;
+                            }
 
                             String seatId = reservationPair.first;
                             Reservation reservation = reservationPair.second;
@@ -134,23 +155,22 @@ public class LocationService extends BroadcastReceiver {
                             reservation.setOccupied(false);
                             reservation.setLastSeen(CalendarUtils.getTimeOfDay(now));
                             Data.INSTANCE.library.updateReservation(seatId, reservation);
-
                             Intent openDialogIntent = new Intent(context, MainActivity.class);
                             openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
 
-                            if (Data.INSTANCE.isInForeground) {
+                            if (Data.INSTANCE.isInForeground.get()) {
                                 context.startActivity(openDialogIntent);
                                 return null;
                             }
 
-                            Intent keepSeatIntent = new Intent(context, MainActivity.class);
+                            final Intent keepSeatIntent = new Intent(context, MainActivity.class);
                             keepSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_YES);
                             Intent freeSeatIntent = new Intent(context, MainActivity.class);
                             freeSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_NO);
 
-                            PendingIntent pIntentKeepSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, keepSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                            PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 1, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                            PendingIntent pIntentOpenDialog = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 2, openDialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            final PendingIntent pIntentKeepSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, keepSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            final PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 1, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            final PendingIntent pIntentOpenDialog = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 2, openDialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                             Notification notification = new NotificationCompat.Builder(context)
                                     .setSmallIcon(R.drawable.app_icon)
                                     .setContentTitle(context.getString(R.string.notification_title))
@@ -165,8 +185,11 @@ public class LocationService extends BroadcastReceiver {
                             notification.defaults |= Notification.DEFAULT_VIBRATE;
                             notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-                            NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                            final NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
                             notificationManager.notify(NOTIFICATION_ID, notification);
+
+                            Data.INSTANCE.keepNotification = true;
+                            showCountdownNotification = true;
                         }
                     }
                 } catch (IOException | JSONException e) {
@@ -193,6 +216,60 @@ public class LocationService extends BroadcastReceiver {
             Data.INSTANCE.isSitting = true;
             reservation.setOccupied(true);
             library.updateReservation(seatId, reservation);
+        }
+    }
+
+    private static class Timer extends CountDownTimer {
+        private Context context;
+
+        public Timer(long millisInFuture, long countDownInterval, Context context) {
+            super(millisInFuture, countDownInterval);
+
+            this.context = context;
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            Intent openDialogIntent = new Intent(context, MainActivity.class);
+            openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
+
+            final Intent keepSeatIntent = new Intent(context, MainActivity.class);
+            keepSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_YES);
+            Intent freeSeatIntent = new Intent(context, MainActivity.class);
+            freeSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_NO);
+
+            final PendingIntent pIntentKeepSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, keepSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            final PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 1, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            final PendingIntent pIntentOpenDialog = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 2, openDialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            long seconds = millisUntilFinished / 1000;
+            long minutes = seconds / 60;
+            seconds -= minutes * 60;
+
+            Notification notification = new NotificationCompat.Builder(context)
+                    .setSmallIcon(R.drawable.app_icon)
+                    .setContentTitle(context.getString(R.string.notification_title))
+                    .setContentText(String.format(context.getString(R.string.notification_content), minutes, seconds))
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(String.format(context.getString(R.string.notification_content), minutes, seconds)))
+                    .setContentIntent(pIntentOpenDialog)
+                    .setAutoCancel(true)
+                    .setOngoing(true)
+                    .addAction(R.drawable.ic_done_black_24dp, context.getString(R.string.yes), pIntentKeepSeat)
+                    .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.no), pIntentFreeSeat)
+                    .build();
+            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+            final NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(NOTIFICATION_ID, notification);
+
+            if (!Data.INSTANCE.keepNotification) {
+                cancel();
+            }
+        }
+
+        @Override
+        public void onFinish() {
+            Data.INSTANCE.keepNotification = false;
         }
     }
 }

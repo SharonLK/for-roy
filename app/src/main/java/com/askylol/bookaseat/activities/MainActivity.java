@@ -72,6 +72,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -662,6 +663,8 @@ public class MainActivity extends AppCompatActivity {
         trackTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                System.out.println("22222222222222222222");
+
                 ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
 
                 runOnUiThread(new TimerTask() {
@@ -671,24 +674,26 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
             }
-        }, 0, 10000);
+        }, 2000, 3500);
     }
 
     @Override
     protected void onPause() {
         unregisterReceiver(wifiReceiver);
-        unregisterReceiver(locationService);
-        Data.INSTANCE.isInForeground = false;
+//        unregisterReceiver(locationService);
+        Data.INSTANCE.isInForeground.set(false);
+        System.out.println("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH " + Data.INSTANCE.isInForeground);
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+//        registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
 
-        Data.INSTANCE.isInForeground = true;
+        Data.INSTANCE.isInForeground.set(true);
+        System.out.println("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF " + Data.INSTANCE.isInForeground);
 
         ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
     }
@@ -715,10 +720,15 @@ public class MainActivity extends AppCompatActivity {
             ((NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE))
                     .cancel(LocationService.NOTIFICATION_ID);
             Library library = Data.INSTANCE.library;
+
+            if (library == null) {
+                return;
+            }
+
             final Calendar now = Calendar.getInstance();
             Pair<String, Reservation> reservationPair = library.reservationByUser(now, Data.INSTANCE.mail);
             if (reservationPair == null) {
-                getDismissableSnackbar(getString(R.string.reservation_expired));
+                getDismissableSnackbar(getString(R.string.reservation_expired)).show();
                 return;
             }
 
@@ -736,7 +746,7 @@ public class MainActivity extends AppCompatActivity {
                 case NOTIFICATION_CLICK:
                     AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                             .setTitle(R.string.notification_title)
-                            .setMessage(R.string.notification_content)
+                            .setMessage(R.string.notification_content_short)
                             .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {

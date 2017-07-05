@@ -56,7 +56,8 @@
     <string name="please_sign_in">על מנת להמשיך, אנא היכנס כמשתמש רשום</string>
     <string name="nav_log_out">התנתק</string>
     <string name="notification_title">הינך עוזב את הספריה</string>
-    <string name="notification_content">האם ברצונך לשמור את הכסא?</string>
+    <string name="notification_content" formatted="false">האם ברצונך לשמור את הכסא?\nהזמן שנותר: %d דקות ו- %d שניות</string>
+    <string name="notification_content_short">האם ברצונך לשמור את הכסא?</string>
     <string name="no">לא</string>
     <string name="history">היסטוריה</string>
     <string name="idle_time_limit">זמן התבטלות מקסימלי:</string>
