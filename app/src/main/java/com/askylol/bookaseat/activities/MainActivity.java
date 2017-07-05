@@ -664,6 +664,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        unregisterReceiver(wifiReceiver);
         unregisterReceiver(locationService);
         super.onPause();
     }

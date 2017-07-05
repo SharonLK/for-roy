@@ -89,6 +89,19 @@ public class LocationService extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         new AsyncTask<String, Void, Void>() {
+            boolean showToast = false;
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                if (showToast) {
+                    ((Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(300);
+                    Toast.makeText(context, R.string.in_library_message, Toast.LENGTH_LONG).show();
+                }
+                showToast = false;
+            }
+
             @Override
             protected Void doInBackground(String... params) {
                 try {
@@ -100,9 +113,8 @@ public class LocationService extends BroadcastReceiver {
 
                     if (res.getString("location").equals("library")) {
                         if (!Data.INSTANCE.isInLibrary) {
-                            ((Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE)).vibrate(300);
-                            Toast.makeText(context, R.string.in_library_message, Toast.LENGTH_LONG).show();
                             Data.INSTANCE.isInLibrary = true;
+                            showToast = true;
                         }
                         markReservedSeatForUser(Data.INSTANCE.mail);
                     } else {
@@ -161,8 +173,13 @@ public class LocationService extends BroadcastReceiver {
 
     private void markReservedSeatForUser(String username) {
         Library library = Data.INSTANCE.library;
+        if (library == null)
+            return;
+
         Calendar currentTime = Calendar.getInstance();
         Pair<String, Reservation> reservationPair = library.reservationByUser(currentTime, username);
+        if (reservationPair == null)
+            return;
         String seatId = reservationPair.first;
         Reservation reservation = reservationPair.second;
         if (reservation != null && !reservation.isOccupied() &&
