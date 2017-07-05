@@ -730,8 +730,7 @@ public class MainActivity extends AppCompatActivity {
                     showReservedSnackbar();
                     break;
                 case NOTIFICATION_NO:
-                    Data.INSTANCE.library.removeReservation(seatId, CalendarUtils.getDateString(now), reservation); //TODO: check me
-                    showFreedSnackbar();
+                    endReservation(now, seatId, reservation);
                     break;
                 case NOTIFICATION_CLICK:
                     AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
@@ -746,8 +745,7 @@ public class MainActivity extends AppCompatActivity {
                             .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Data.INSTANCE.library.removeReservation(seatId, CalendarUtils.getDateString(now), reservation); //TODO: check me
-                                    showFreedSnackbar();
+                                    endReservation(now, seatId, reservation);
                                 }
                             })
                             .create();
@@ -759,6 +757,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    private void endReservation(Calendar now, String seatId, Reservation reservation) {
+        reservation.setEnd(CalendarUtils.getTimeOfDay(now));
+        Data.INSTANCE.library.updateReservation(seatId, reservation); //TODO: check me
+        showFreedSnackbar();
     }
 
     private Snackbar getDismissableSnackbar(String content) {
