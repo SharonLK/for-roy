@@ -2,6 +2,7 @@ package com.askylol.bookaseat.activities;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -317,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
             Button dateButton = (Button) findViewById(R.id.date_button);
             String[] date = dateButton.getText().toString().split("\\.");
 
-            Calendar selectedCalendar = (Calendar)selectedDateTime.clone();
+            Calendar selectedCalendar = (Calendar) selectedDateTime.clone();
             selectedCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[0]));
             selectedCalendar.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
             selectedCalendar.set(Calendar.YEAR, Integer.parseInt(date[2]));
@@ -358,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
                                 .create();
 
                         dialog.show();
+                        doKeepDialog(dialog);
                     }
                 });
             } else if (!free) {
@@ -376,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
                                 .create();
 
                         dialog.show();
+                        doKeepDialog(dialog);
 
                         final TimeOfDay endTime = CalendarUtils.getTimeOfDay(selectedDateTime).add(1, 0);
 
@@ -674,7 +678,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         unregisterReceiver(wifiReceiver);
         unregisterReceiver(locationService);
-        Data.INSTANCE.isInForground = false;
+        Data.INSTANCE.isInForeground = false;
         super.onPause();
     }
 
@@ -684,7 +688,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
 
-        Data.INSTANCE.isInForground = true;
+        Data.INSTANCE.isInForeground = true;
 
         ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
     }
@@ -699,8 +703,9 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         trackTimer.cancel();
-        Data.INSTANCE.mail = null;
+        Data.reset();
         startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     @Override
@@ -725,8 +730,7 @@ public class MainActivity extends AppCompatActivity {
                     showReservedSnackbar();
                     break;
                 case NOTIFICATION_NO:
-                    Data.INSTANCE.library.removeReservation(seatId, CalendarUtils.getDateString(now), reservation); //TODO: check me
-                    showFreedSnackbar();
+                    endReservation(now, seatId, reservation);
                     break;
                 case NOTIFICATION_CLICK:
                     AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
@@ -741,18 +745,24 @@ public class MainActivity extends AppCompatActivity {
                             .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Data.INSTANCE.library.removeReservation(seatId, CalendarUtils.getDateString(now), reservation); //TODO: check me
-                                    showFreedSnackbar();
+                                    endReservation(now, seatId, reservation);
                                 }
                             })
                             .create();
 
                     dialog.show();
+                    doKeepDialog(dialog);
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    private void endReservation(Calendar now, String seatId, Reservation reservation) {
+        reservation.setEnd(CalendarUtils.getTimeOfDay(now));
+        Data.INSTANCE.library.updateReservation(seatId, reservation); //TODO: check me
+        showFreedSnackbar();
     }
 
     private Snackbar getDismissableSnackbar(String content) {
@@ -778,6 +788,14 @@ public class MainActivity extends AppCompatActivity {
                         Data.INSTANCE.library.getIdleLimit()
                 )
         ).show();
+    }
+
+    private void doKeepDialog(Dialog dialog) {
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
     }
 
     public class WifiBroadcastReceiver extends BroadcastReceiver {

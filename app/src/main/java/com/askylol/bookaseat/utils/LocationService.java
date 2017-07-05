@@ -114,6 +114,8 @@ public class LocationService extends BroadcastReceiver {
                     if (res.getString("location").equals("library")) {
                         if (!Data.INSTANCE.isInLibrary) {
                             Data.INSTANCE.isInLibrary = true;
+                            ((NotificationManager) context.getSystemService(NOTIFICATION_SERVICE))
+                                    .cancel(LocationService.NOTIFICATION_ID);
                             showToast = true;
                         }
                         markReservedSeatForUser(Data.INSTANCE.mail);
@@ -138,7 +140,7 @@ public class LocationService extends BroadcastReceiver {
                             Intent openDialogIntent = new Intent(context, MainActivity.class);
                             openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
 
-                            if (Data.INSTANCE.isInForground) {
+                            if (Data.INSTANCE.isInForeground) {
                                 context.startActivity(openDialogIntent);
                                 return null;
                             }
