@@ -63,7 +63,7 @@ public class LocationService extends BroadcastReceiver {
     private static JSONObject getJsonForTrack(String username, JSONArray wifiFingerprints) throws JSONException {
         JSONObject jsonParam = new JSONObject();
         jsonParam.put("group", "Bookaseat1");//TODO: change params
-        jsonParam.put("mail", username);
+        jsonParam.put("username", username);
         jsonParam.put("location", "location"); //TODO: why do we need this param?
         jsonParam.put("time", Calendar.getInstance().getTimeInMillis());
         jsonParam.put("wifi-fingerprint", wifiFingerprints);
