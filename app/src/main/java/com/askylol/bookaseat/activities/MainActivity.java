@@ -290,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
                                 dialog.cancel();
                                 new AlertDialog.Builder(MainActivity.this)
                                         .setMessage(R.string.warning_presence_not_identified)
+                                        .setNeutralButton(R.string.ok, null)
                                         .show();
                             }
                         });
