@@ -73,4 +73,6 @@
     <string name="seat_freed">The seat has been freed</string>
     <string name="reservation_expired">Reservation expired</string>
     <string name="in_library_message">You are in the library!</string>
+    <string name="warning_gps_off">enabling GPS is required in order to identify presence in library on Android 6.0.0. Would you like to enable it?</string>
+    <string name="warning_presence_not_identified">Presence in library will not be identified until GPS is enabled.</string>
 </resources>

@@ -13,8 +13,11 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.location.LocationManager;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -230,8 +233,8 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        findViewById(R.id.warning_message_text_view).setVisibility(wifi.isWifiEnabled() ? View.GONE : View.VISIBLE);
+        checkWifiAndLocationPermissions();
+
 
         //TODO: do we need to check for other permissions?
         if (ContextCompat.checkSelfPermission(
@@ -264,6 +267,38 @@ public class MainActivity extends AppCompatActivity {
 
         mGoogleApiClient.connect();
 
+    }
+
+    private void checkWifiAndLocationPermissions() {
+        WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        View warning_message = findViewById(R.id.warning_message_text_view);
+        if (wifi.isWifiEnabled()) {
+            warning_message.setVisibility(View.GONE);
+            LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M
+                    && !manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.warning_gps_off)
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, final int id) {
+                                startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.no), new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, final int id) {
+                                dialog.cancel();
+                                new AlertDialog.Builder(MainActivity.this)
+                                        .setMessage(R.string.warning_presence_not_identified)
+                                        .show();
+                            }
+                        });
+                final AlertDialog alert = builder.create();
+                alert.show();
+            }
+        } else {
+            warning_message.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -801,8 +836,7 @@ public class MainActivity extends AppCompatActivity {
     public class WifiBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            WifiManager wifi = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            MainActivity.this.findViewById(R.id.warning_message_text_view).setVisibility(wifi.isWifiEnabled() ? View.GONE : View.VISIBLE);
+            checkWifiAndLocationPermissions();
         }
     }
 }

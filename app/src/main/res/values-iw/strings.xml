@@ -73,4 +73,6 @@
     <string name="reserved_for_x_minutes">הכסא שמור ל-%d הדקות הקרובות</string>
     <string name="seat_freed">הכסא שוחרר</string>
     <string name="warning_message">לזיהוי מיקום אוטומטי, אנא הפעל WiFi</string>
+    <string name="warning_gps_off">על מנת לזהות את שהותך בספריה בגרסה 6.0.0 של Android, נדרשת גישה ל-GPS. האם ברצונך להפעילו כעת?</string>
+    <string name="warning_presence_not_identified">לא נוכל לזהות את שהותך בספריה עד אשר יופעל GPS.</string>
 </resources>
