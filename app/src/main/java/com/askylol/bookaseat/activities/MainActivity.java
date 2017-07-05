@@ -646,7 +646,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTimer() {
-        locationService.onReceive(getApplicationContext(), getIntent());
         trackTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -666,6 +665,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         unregisterReceiver(wifiReceiver);
         unregisterReceiver(locationService);
+        Data.INSTANCE.isInForground = false;
         super.onPause();
     }
 
@@ -674,6 +674,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+
+        Data.INSTANCE.isInForground = true;
 
         ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
     }
@@ -761,7 +763,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showReservedSnackbar() {
-        getDismissableSnackbar(getString(R.string.reserved_for_x_minutes)).show();
+        getDismissableSnackbar(
+                String.format(
+                        getString(R.string.reserved_for_x_minutes),
+                        Data.INSTANCE.library.getIdleLimit()
+                )
+        ).show();
     }
 
     public class WifiBroadcastReceiver extends BroadcastReceiver {
