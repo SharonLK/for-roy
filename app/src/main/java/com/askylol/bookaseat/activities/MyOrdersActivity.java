@@ -1,12 +1,12 @@
 package com.askylol.bookaseat.activities;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -25,6 +25,9 @@ import com.askylol.bookaseat.utils.Pair;
 import com.askylol.bookaseat.utils.TimeOfDay;
 
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 
 public class MyOrdersActivity extends AppCompatActivity {
@@ -52,13 +55,29 @@ public class MyOrdersActivity extends AppCompatActivity {
                 new Date(c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)),
                 new TimeOfDay(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)));
 
+        List<Pair<String, Reservation>> reservationsDates = Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.mail);
+        Collections.sort(reservationsDates, new Comparator<Pair<String, Reservation>>() {
+            @Override
+            public int compare(Pair<String, Reservation> o1, Pair<String, Reservation> o2) {
+                if (o1 == null || o2 == null || o1.second == null || o2.second == null) {
+                    return 0;
+                }
+
+                DateAndTime first = new DateAndTime(new Date(o1.first, "_"), o1.second.getStart());
+                DateAndTime second = new DateAndTime(new Date(o2.first, "_"), o2.second.getStart());
+
+                if (first.equals(second)) {
+                    return 0;
+                }
+
+                return first.before(second) ? -1 : 1;
+            }
+        });
+
         if (Data.INSTANCE.library != null) {
-            for (Pair<String, Reservation> dateReservation : Data.INSTANCE.library.reservationsByUser(Data.INSTANCE.mail)) {
+            for (Pair<String, Reservation> dateReservation : reservationsDates) {
                 String date = dateReservation.first;
                 Reservation reservation = dateReservation.second;
-
-                System.out.println(dateAndTime);
-                System.out.println(new DateAndTime(new Date(date, "_"), reservation.getEnd()));
 
                 if (dateAndTime.after(new DateAndTime(new Date(date, "_"), reservation.getEnd()))) {
                     historyAdapter.add(dateReservation);
