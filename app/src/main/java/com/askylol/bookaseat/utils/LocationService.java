@@ -138,7 +138,7 @@ public class LocationService extends BroadcastReceiver {
                             Intent openDialogIntent = new Intent(context, MainActivity.class);
                             openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
 
-                            if (Data.INSTANCE.isInForground) {
+                            if (Data.INSTANCE.isInForeground) {
                                 context.startActivity(openDialogIntent);
                                 return null;
                             }

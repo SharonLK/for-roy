@@ -674,7 +674,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         unregisterReceiver(wifiReceiver);
         unregisterReceiver(locationService);
-        Data.INSTANCE.isInForground = false;
+        Data.INSTANCE.isInForeground = false;
         super.onPause();
     }
 
@@ -684,7 +684,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(locationService, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
 
-        Data.INSTANCE.isInForground = true;
+        Data.INSTANCE.isInForeground = true;
 
         ((WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE)).startScan();
     }
@@ -699,8 +699,9 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         trackTimer.cancel();
-        Data.INSTANCE.mail = null;
+        Data.reset();
         startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     @Override
