@@ -2,6 +2,7 @@ package com.askylol.bookaseat.activities;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.BroadcastReceiver;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -317,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
             Button dateButton = (Button) findViewById(R.id.date_button);
             String[] date = dateButton.getText().toString().split("\\.");
 
-            Calendar selectedCalendar = (Calendar)selectedDateTime.clone();
+            Calendar selectedCalendar = (Calendar) selectedDateTime.clone();
             selectedCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[0]));
             selectedCalendar.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
             selectedCalendar.set(Calendar.YEAR, Integer.parseInt(date[2]));
@@ -358,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
                                 .create();
 
                         dialog.show();
+                        doKeepDialog(dialog);
                     }
                 });
             } else if (!free) {
@@ -376,6 +379,7 @@ public class MainActivity extends AppCompatActivity {
                                 .create();
 
                         dialog.show();
+                        doKeepDialog(dialog);
 
                         final TimeOfDay endTime = CalendarUtils.getTimeOfDay(selectedDateTime).add(1, 0);
 
@@ -749,6 +753,7 @@ public class MainActivity extends AppCompatActivity {
                             .create();
 
                     dialog.show();
+                    doKeepDialog(dialog);
                     break;
                 default:
                     break;
@@ -779,6 +784,14 @@ public class MainActivity extends AppCompatActivity {
                         Data.INSTANCE.library.getIdleLimit()
                 )
         ).show();
+    }
+
+    private void doKeepDialog(Dialog dialog) {
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
     }
 
     public class WifiBroadcastReceiver extends BroadcastReceiver {
