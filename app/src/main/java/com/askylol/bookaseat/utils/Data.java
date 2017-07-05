@@ -12,7 +12,7 @@ public enum Data {
 
     public String mail = null;
     public Library library = null;
-    public boolean isSitting = true;
+    public boolean isSitting = false;
     public boolean isInLibrary = false;
     public AtomicBoolean isInForeground = new AtomicBoolean(false);
     public boolean keepNotification = false;

@@ -41,7 +41,7 @@ public class LocationService extends BroadcastReceiver {
     public static final Integer NOTIFICATION_ID = 0xFF1;
     private static final String baseUrl = "https://ml.internalpositioning.com";
 
-    private static CountDownTimer timer = null;
+    public static CountDownTimer timer = null;
 
     static public JSONObject track(Context context, String username) throws JSONException, IOException {
         final MediaType JSON
@@ -112,8 +112,6 @@ public class LocationService extends BroadcastReceiver {
 
                     timer = new Timer(Data.INSTANCE.library.getMaxDelay() * 60 * 1000, 1000, context);
                     timer.start();
-
-                    Data.INSTANCE.isSitting = false;
                 }
                 showCountdownNotification = false;
             }

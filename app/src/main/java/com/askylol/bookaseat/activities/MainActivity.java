@@ -777,6 +777,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case NOTIFICATION_NO:
                     endReservation(now, seatId, reservation);
+
+                    if (LocationService.timer != null) {
+                        LocationService.timer.cancel();
+                    }
+
                     break;
                 case NOTIFICATION_CLICK:
                     AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
