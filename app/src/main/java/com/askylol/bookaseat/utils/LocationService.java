@@ -125,7 +125,7 @@ public class LocationService extends BroadcastReceiver {
                         return null;
                     }
 
-                    if (res.getString("location").equals("library")) {
+                    if ("library".equals(res.getString("location"))) {
                         if (!Data.INSTANCE.isInLibrary) {
                             Data.INSTANCE.isInLibrary = true;
                             ((NotificationManager) context.getSystemService(NOTIFICATION_SERVICE))

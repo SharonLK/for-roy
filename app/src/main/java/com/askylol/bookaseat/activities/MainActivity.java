@@ -421,6 +421,7 @@ public class MainActivity extends AppCompatActivity {
 
                         final TimeOfDay endTime = CalendarUtils.getTimeOfDay(selectedDateTime).add(1, 0);
 
+                        ((TextView) dialog.findViewById(R.id.startTimeValue)).setText(CalendarUtils.getTimeString(selectedDateTime));
                         initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.endTimeButton), endTime, id);
 
                         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
@@ -752,13 +753,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        Log.d("HI", "status: " + status);
-                    }
-                });
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
 
         trackTimer.cancel();
         Data.reset();
