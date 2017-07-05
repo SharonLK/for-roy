@@ -68,4 +68,7 @@
     <string name="current_library_admins">Current library admins:</string>
     <string name="warning_message">For automatic location detection, turn on Wifi</string>
     <string name="minutes">minutes</string>
+    <string name="reserved_for_x_minutes" formatted="false">Seat is reserved for the next %d minutes</string>
+    <string name="dismiss">DISMISS</string>
+    <string name="seat_freed">The seat has been freed</string>
 </resources>

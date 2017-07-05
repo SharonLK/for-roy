@@ -16,6 +16,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -645,6 +646,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupTimer() {
+        locationService.onReceive(getApplicationContext(), getIntent());
         trackTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -695,15 +697,43 @@ public class MainActivity extends AppCompatActivity {
         if (intent.hasExtra("notificationStatus")) {
             ((NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE))
                     .cancel(LocationService.NOTIFICATION_ID);
+            Library library = Data.INSTANCE.library;
+            Calendar now = Calendar.getInstance();
+            Pair<String, Reservation> reservationPair = library.reservationByUser(now, Data.INSTANCE.mail);
+            if (reservationPair == null)
+                return;
+
+            String seatId = reservationPair.first;
+            Reservation reservation = reservationPair.second;
+
             switch (intent.getIntExtra("notificationStatus", -1)) {
                 case NOTIFICATION_YES:
-                    Log.d("NOTIFICATION", "Pressed YES!");
+                    Snackbar.make(
+                            findViewById(android.R.id.content),
+                            String.format(getString(R.string.reserved_for_x_minutes), library.getIdleLimit()),
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.dismiss), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                }
+                            })
+                            .show();
                     break;
                 case NOTIFICATION_NO:
-                    Log.d("NOTIFICATION", "Pressed NO :(");
+                    Data.INSTANCE.library.removeReservation(seatId, CalendarUtils.getDateString(now), reservation);
+                    Snackbar.make(
+                            findViewById(android.R.id.content),
+                            getString(R.string.seat_freed),
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction(getString(R.string.dismiss), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                }
+                            })
+                            .show();
                     break;
                 case NOTIFICATION_CLICK:
-                    Log.d("NOTIFICATION", "Clicked on notification!");
+                    Log.d("NOTIFICATION", "Clicked on notification!"); //TODO
                     break;
                 default:
                     break;

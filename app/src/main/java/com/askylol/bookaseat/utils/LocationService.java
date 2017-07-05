@@ -96,49 +96,53 @@ public class LocationService extends BroadcastReceiver {
                         return null;
                     }
 
-//                    if (res.getString("location").equals("library")) {
-//                        markReservedSeatForUser(Data.INSTANCE.mail);
-//                    } else {
-//                        if (Data.INSTANCE.isSitting) {
-//                            Data.INSTANCE.isSitting = false;
-//
-//                            Calendar now = Calendar.getInstance();
-//                            Pair<String, Reservation> reservationPair = Data.INSTANCE.library.reservationByUser(now, Data.INSTANCE.mail);
-//
-//                            if (reservationPair != null && reservationPair.first != null && reservationPair.second != null) {
-//                                reservationPair.second.setOccupied(false);
-//                                reservationPair.second.setLastSeen(CalendarUtils.getTimeOfDay(now));
-//                                Data.INSTANCE.library.updateReservation(reservationPair.first, reservationPair.second);
-//
-//                                Intent keepSeatIntent = new Intent(context, MainActivity.class);
-//                                keepSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_YES);
-//                                Intent freeSeatIntent = new Intent(context, MainActivity.class);
-//                                freeSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_NO);
-//                                Intent openDialogIntent = new Intent(context, MainActivity.class);
-//                                openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
-//
-//                                PendingIntent pIntentKeepSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, keepSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//                                PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 1, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//                                PendingIntent pIntentOpenDialog = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 2, openDialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//                                Notification notification = new NotificationCompat.Builder(context)
-//                                        .setSmallIcon(R.drawable.app_icon)
-//                                        .setContentTitle(context.getString(R.string.notification_title))
-//                                        .setContentText(context.getString(R.string.notification_content))
-//                                        .setContentIntent(pIntentOpenDialog)
-//                                        .setAutoCancel(true)
-//                                        .setOngoing(true)
-//                                        .addAction(R.drawable.ic_done_black_24dp, context.getString(R.string.yes), pIntentKeepSeat)
-//                                        .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.no), pIntentFreeSeat)
-//                                        .build();
-//                                notification.defaults |= Notification.DEFAULT_SOUND;
-//                                notification.defaults |= Notification.DEFAULT_VIBRATE;
-//                                notification.flags |= Notification.FLAG_AUTO_CANCEL;
-//
-//                                NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-//                                notificationManager.notify(NOTIFICATION_ID, notification);
-//                            }
-//                        }
-//                    }
+                    if (res.getString("location").equals("library")) {
+                        markReservedSeatForUser(Data.INSTANCE.mail);
+                    } else {
+                        if (Data.INSTANCE.isSitting) {
+                            Data.INSTANCE.isSitting = false;
+
+                            Calendar now = Calendar.getInstance();
+                            Pair<String, Reservation> reservationPair = Data.INSTANCE.library.reservationByUser(now, Data.INSTANCE.mail);
+
+                            if (reservationPair == null || reservationPair.first == null || reservationPair.second == null)
+                                return null;
+
+                            String seatId = reservationPair.first;
+                            Reservation reservation = reservationPair.second;
+
+                            reservation.setOccupied(false);
+                            reservation.setLastSeen(CalendarUtils.getTimeOfDay(now));
+                            Data.INSTANCE.library.updateReservation(seatId, reservation);
+
+                            Intent keepSeatIntent = new Intent(context, MainActivity.class);
+                            keepSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_YES);
+                            Intent freeSeatIntent = new Intent(context, MainActivity.class);
+                            freeSeatIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_NO);
+                            Intent openDialogIntent = new Intent(context, MainActivity.class);
+                            openDialogIntent.putExtra("notificationStatus", MainActivity.NOTIFICATION_CLICK);
+
+                            PendingIntent pIntentKeepSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE, keepSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            PendingIntent pIntentFreeSeat = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 1, freeSeatIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            PendingIntent pIntentOpenDialog = PendingIntent.getActivity(context, NOTIFICATION_REQUEST_CODE + 2, openDialogIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            Notification notification = new NotificationCompat.Builder(context)
+                                    .setSmallIcon(R.drawable.app_icon)
+                                    .setContentTitle(context.getString(R.string.notification_title))
+                                    .setContentText(context.getString(R.string.notification_content))
+                                    .setContentIntent(pIntentOpenDialog)
+                                    .setAutoCancel(true)
+                                    .setOngoing(true)
+                                    .addAction(R.drawable.ic_done_black_24dp, context.getString(R.string.yes), pIntentKeepSeat)
+                                    .addAction(R.drawable.ic_clear_black_24dp, context.getString(R.string.no), pIntentFreeSeat)
+                                    .build();
+                            notification.defaults |= Notification.DEFAULT_SOUND;
+                            notification.defaults |= Notification.DEFAULT_VIBRATE;
+                            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                            NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                            notificationManager.notify(NOTIFICATION_ID, notification);
+                        }
+                    }
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
