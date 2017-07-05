@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
     private List<View> views = new ArrayList<>();
 
     private Calendar selectedDateTime = Calendar.getInstance();
-    private TimeOfDay startTime;
     private Timer trackTimer = new Timer();
 
     ValueEventListener libraryChangedListener = new ValueEventListener() {
@@ -109,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         selectedDateTime = Calendar.getInstance();
-        startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
         initializeStartTimeButton();
 
         updateDate((Button) findViewById(R.id.date_button));
@@ -291,6 +289,7 @@ public class MainActivity extends AppCompatActivity {
 
         selectedDateTime.setTimeInMillis(savedInstanceState.getLong(SELECTED_DATE_TIME_KEY));
         updateDate((Button) findViewById(R.id.date_button));
+        updateTime((Button) findViewById(R.id.start_time_button));
     }
 
     private void updateTime(Button timeButton) {
@@ -318,9 +317,7 @@ public class MainActivity extends AppCompatActivity {
             Button dateButton = (Button) findViewById(R.id.date_button);
             String[] date = dateButton.getText().toString().split("\\.");
 
-            Calendar selectedCalendar = Calendar.getInstance();
-            selectedCalendar.set(Calendar.HOUR_OF_DAY, startTime.hour);
-            selectedCalendar.set(Calendar.MINUTE, startTime.minute);
+            Calendar selectedCalendar = (Calendar)selectedDateTime.clone();
             selectedCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[0]));
             selectedCalendar.set(Calendar.MONTH, Integer.parseInt(date[1]) - 1);
             selectedCalendar.set(Calendar.YEAR, Integer.parseInt(date[2]));
@@ -380,7 +377,7 @@ public class MainActivity extends AppCompatActivity {
 
                         dialog.show();
 
-                        final TimeOfDay endTime = startTime.add(1, 0);
+                        final TimeOfDay endTime = CalendarUtils.getTimeOfDay(selectedDateTime).add(1, 0);
 
                         initializeTimeButton(dialog, (Button) dialog.findViewById(R.id.endTimeButton), endTime, id);
 
@@ -394,7 +391,12 @@ public class MainActivity extends AppCompatActivity {
                         reserveButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Data.INSTANCE.library.reserve(id, new User(Data.INSTANCE.mail), CalendarUtils.getDateString(selectedDateTime), startTime, endTime); // TODO: Update to real user
+                                Data.INSTANCE.library.reserve(
+                                        id,
+                                        new User(Data.INSTANCE.mail),
+                                        CalendarUtils.getDateString(selectedDateTime),
+                                        CalendarUtils.getTimeOfDay(selectedDateTime),
+                                        endTime);
                                 dialog.dismiss();
                             }
                         });
@@ -459,6 +461,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeStartTimeButton() {
+        TimeOfDay startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
         startTime.minute = (int) Math.ceil(startTime.minute / 15.0) * 15;
         startTime.hour = startTime.hour + (startTime.minute > 45 ? 1 : 0);
 
@@ -466,6 +469,9 @@ public class MainActivity extends AppCompatActivity {
         if (startTime.minute >= 60) {
             startTime.minute = 0;
         }
+
+        selectedDateTime.set(Calendar.HOUR_OF_DAY, startTime.hour);
+        selectedDateTime.set(Calendar.MINUTE, startTime.minute);
 
         final Button button = (Button) findViewById(R.id.start_time_button);
 
@@ -488,10 +494,9 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
 
-                        startTime.hour = hoursPicker.getValue();
-                        startTime.minute = minutesPicker.getValue() * 15;
-                        button.setText(CalendarUtils.getTimeString(startTime));
-
+                        selectedDateTime.set(Calendar.HOUR_OF_DAY, hoursPicker.getValue());
+                        selectedDateTime.set(Calendar.MINUTE, minutesPicker.getValue() * 15);
+                        button.setText(CalendarUtils.getTimeString(selectedDateTime));
                         updateTileViewViews();
                     }
                 });
@@ -504,6 +509,8 @@ public class MainActivity extends AppCompatActivity {
                 if (minutesPicker == null || hoursPicker == null) {
                     return;
                 }
+
+                TimeOfDay startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
 
                 int quarter = (int) Math.ceil(startTime.minute / 15.0);
                 minutesPicker.setMinValue(0);
@@ -593,6 +600,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String endTime[] = endTimeButton.getText().toString().split(":");
+
+        TimeOfDay startTime = CalendarUtils.getTimeOfDay(selectedDateTime);
 
         long startMins = startTime.hour * 60 + startTime.minute;
         long endMins = Integer.parseInt(endTime[0]) * 60 + Integer.parseInt(endTime[1]);
