@@ -36,6 +36,13 @@
         android:layout_margin="10dp"
         android:textAlignment="center" />
 
+    <TextView
+        android:id="@+id/next_reservation_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp" />
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -54,7 +61,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/reserve" />
-
 
     </LinearLayout>
 

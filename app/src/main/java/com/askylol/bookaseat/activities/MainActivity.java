@@ -72,6 +72,7 @@ import com.qozix.tileview.widgets.ZoomPanLayout;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -354,7 +355,7 @@ public class MainActivity extends AppCompatActivity {
             final String id = entry.getKey();
 
             Button dateButton = (Button) findViewById(R.id.date_button);
-            String[] date = dateButton.getText().toString().split("\\.");
+            final String[] date = dateButton.getText().toString().split("\\.");
 
             Calendar selectedCalendar = (Calendar) selectedDateTime.clone();
             selectedCalendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date[0]));
@@ -425,8 +426,24 @@ public class MainActivity extends AppCompatActivity {
                         Button reserveButton = (Button) dialog.findViewById(R.id.reserveButton);
                         Button cancelButton = (Button) dialog.findViewById(R.id.cancelButton);
 
-                        if (reserveButton == null || cancelButton == null) {
+                        TextView nextReservationTextView = (TextView) dialog.findViewById(R.id.next_reservation_message);
+
+                        if (reserveButton == null || cancelButton == null || nextReservationTextView == null) {
                             return;
+                        }
+
+                        Reservation nearestReservation = Data.INSTANCE.library.getNearestReservation(id,
+                                CalendarUtils.getDateString(selectedDateTime).replace(".", "_"),
+                                CalendarUtils.getTimeOfDay(selectedDateTime));
+
+                        if (nearestReservation == null) {
+                            nextReservationTextView.setText(getString(R.string.next_reservation_not_exists_message));
+                        } else {
+                            nextReservationTextView.setText(String.format(Locale.US, getString(R.string.next_reservation_exists_message),
+                                    nearestReservation.getStart().hour,
+                                    nearestReservation.getStart().minute,
+                                    nearestReservation.getEnd().hour,
+                                    nearestReservation.getEnd().minute));
                         }
 
                         reserveButton.setOnClickListener(new View.OnClickListener() {

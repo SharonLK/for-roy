@@ -76,4 +76,6 @@
     <string name="warning_message">לזיהוי מיקום אוטומטי, אנא הפעל WiFi</string>
     <string name="warning_gps_off">על מנת לזהות את שהותך בספריה בגרסה 6.0.0 של Android, נדרשת גישה ל-GPS. האם ברצונך להפעילו כעת?</string>
     <string name="warning_presence_not_identified">לא נוכל לזהות את שהותך בספריה עד אשר יופעל GPS.</string>
+    <string name="next_reservation_exists_message" formatted="false">ההזמנה הבאה בין השעות %02d:%02d ו- %02d:%02d</string>
+    <string name="next_reservation_not_exists_message">אין יותר הזמנות למושב זה בהמשך היום</string>
 </resources>
